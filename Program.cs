@@ -1,42 +1,48 @@
 using ArmoryManagerApi.Models;
-using ArmoryManagerApi.Services;
+using Microsoft.AspNetCore.Server.IIS;
 
-namespace ArmoryManagerApi
+namespace ArmoryManagerApi;
+
+public class Program
 {
-    public class Program
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
+        var _policy = "CorsPolicy";
+        var builder = WebApplication.CreateBuilder(args);
+
+        builder.Services.AddCors(options =>
         {
-            var builder = WebApplication.CreateBuilder(args);
+            options.AddPolicy(name: _policy,
+                policy =>
+                {
+                    policy.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+                });
+        });
 
-            // Add services to the container.
-            builder.Services.Configure<ArmoryManagerDatabaseSettings>(
-                builder.Configuration.GetSection("ArmoryManagerDatabase"));
+        builder.Services.AddControllers();
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
+        builder.Services.AddDbContext<ArmoryManagerContext>();
 
-            builder.Services.AddSingleton<GunsService>();
-            builder.Services.AddSingleton<PicklistService>();
-
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-
-            var app = builder.Build();
-
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-
-            app.UseHttpsRedirection();
-
-            app.UseAuthorization();
-
-            app.MapControllers();
-
-            app.Run();
+        var app = builder.Build();
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
         }
+
+        app.UseHttpsRedirection();
+        app.UseStaticFiles();
+        app.UseRouting();
+
+        app.UseCors(_policy);
+        app.UseAuthorization();
+
+        app.MapControllers();
+
+        app.Run();
     }
 }
