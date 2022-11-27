@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace ArmoryManagerApi.Models;
 
-namespace ArmoryManagerApi.Models;
-
-public partial class Powder
+public partial class PowderTemplate
 {
     public long Id { get; set; }
 

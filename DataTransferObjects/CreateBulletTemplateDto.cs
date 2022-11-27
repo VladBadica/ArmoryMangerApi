@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace ArmoryManagerApi.Models;
+namespace ArmoryManagerApi.DataTransferObjects;
 
-public partial class Bullet
+public class CreateBulletTemplateDto
 {
-    public long Id { get; set; }
-
     public string? Make { get; set; }
 
+    [Required]
     public string Calibre { get; set; } = null!;
 
     public string? Model { get; set; }
 
+    [Required]
     public long Grain { get; set; }
 }

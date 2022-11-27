@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace ArmoryManagerApi.Models;
 
-namespace ArmoryManagerApi.Models;
-
-public partial class Primer
+public partial class PrimerTemplate
 {
     public long Id { get; set; }
 
