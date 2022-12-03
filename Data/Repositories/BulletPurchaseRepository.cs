@@ -1,7 +1,5 @@
-﻿using ArmoryManagerApi.DataTransferObjects;
-using ArmoryManagerApi.Interfaces;
+﻿using ArmoryManagerApi.Interfaces;
 using ArmoryManagerApi.Models;
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace ArmoryManagerApi.Data.Repositories;
@@ -9,12 +7,10 @@ namespace ArmoryManagerApi.Data.Repositories;
 public class BulletPurchaseRepository :IBulletPurchaseRepository
 {
     private readonly ArmoryManagerContext _context;
-    private readonly IMapper _mapper;
 
-    public BulletPurchaseRepository(ArmoryManagerContext context, IMapper mapper)
+    public BulletPurchaseRepository(ArmoryManagerContext context)
 	{
         _context = context;
-        _mapper = mapper;
     }
 
     public void AddBulletPurchase(BulletPurchase newBulletPurchase)
@@ -41,7 +37,7 @@ public class BulletPurchaseRepository :IBulletPurchaseRepository
     public async Task<BulletPurchase> GetBulletPurchaseAsync(long id)
     {
         var bulletPurchase = await _context.BulletPurchases
-            .Include(b => b.BulletTemplateId)
+            .Include(b => b.BulletTemplate)
             .Where(b => b.Id == id)
             .FirstAsync();
 

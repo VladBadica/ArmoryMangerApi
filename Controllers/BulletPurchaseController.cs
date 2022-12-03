@@ -1,15 +1,19 @@
 ﻿using ArmoryManagerApi.Models;
-using ArmoryManagerApi.DataTransferObjects;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using ArmoryManagerApi.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using ArmoryManagerApi.DataTransferObjects.BulletPurchaseDtos;
+using ArmoryManagerApi.Helper;
 
 namespace ArmoryManagerApi.Controllers;
 
 [EnableCors("CorsPolicy")]
 [Route("api/bulletPurchase")]
 [ApiController]
+[Authorize]
+[AllowAnonymous]
 public class BulletPurchaseController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -22,10 +26,18 @@ public class BulletPurchaseController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateBulletPurchase(BulletPurchaseDto newBulletPurchaseDto)
+    public async Task<IActionResult> CreateBulletPurchase(CreateBulletPurchaseDto newBulletPurchaseDto)
     {
+        if (!long.TryParse(HttpContext.Request.Headers["UserId"].ToString(), out long userId))
+        {
+            return BadRequest("Invalid User");
+        }
+
         var newBulletPurchase = _mapper.Map<BulletPurchase>(newBulletPurchaseDto);
-        newBulletPurchase.UserId = 1;
+        newBulletPurchase.UserId = userId;
+        newBulletPurchase.Remaining = newBulletPurchase.InitialCount;
+        newBulletPurchase.CreatedAt = DateTime.Now.ToString(Constants.DATE_TIME_FORMAT);
+        newBulletPurchase.UpdatedAt = DateTime.Now.ToString(Constants.DATE_TIME_FORMAT);
 
         _unitOfWork.BulletPurchaseRepository.AddBulletPurchase(newBulletPurchase);
 
@@ -53,27 +65,11 @@ public class BulletPurchaseController : ControllerBase
     }
 
     [HttpGet]
-	public async Task<ActionResult<List<BulletPurchase>>> GetBulletPurchases()
+	public async Task<ActionResult<List<BulletPurchaseDto>>> GetAllBulletPurchases()
 	{
         var bulletPurchases = await _unitOfWork.BulletPurchaseRepository.GetAllBulletPurchasesAsync();
         var bulletPurchasesDto = _mapper.Map<IEnumerable<BulletPurchaseDto>>(bulletPurchases);
 
         return Ok(bulletPurchasesDto);
 	}
-
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateBulletPurchase(long id, BulletPurchaseDto updatedBulletPurchaseDto)
-    {       
-        if(id != updatedBulletPurchaseDto.Id)
-        {
-            return BadRequest("Update not allowed");
-        }
-
-        var bulletPurchase = await _unitOfWork.BulletPurchaseRepository.GetBulletPurchaseAsync(id);
-        _mapper.Map(updatedBulletPurchaseDto, bulletPurchase);
-
-        await _unitOfWork.SaveAsync();	
-
-        return Ok();
-    }
 }

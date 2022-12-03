@@ -1,7 +1,8 @@
-﻿using ArmoryManagerApi.DataTransferObjects;
+﻿using ArmoryManagerApi.DataTransferObjects.PowderTemplateDtos;
 using ArmoryManagerApi.Interfaces;
 using ArmoryManagerApi.Models;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,8 @@ namespace ArmoryManagerApi.Controllers;
 [EnableCors("CorsPolicy")]
 [Route("api/powder")]
 [ApiController]
+[Authorize]
+[AllowAnonymous]
 public class PowderTemplateController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -24,7 +27,14 @@ public class PowderTemplateController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreatePowder(CreatePowderTemplateDto newPowderDto)
     {
+        if (!long.TryParse(HttpContext.Request.Headers["UserId"].ToString(), out long userId))
+        {
+            return BadRequest("Invalid User");
+        }
+
         var newPowder = _mapper.Map<PowderTemplate>(newPowderDto);
+        //newPowder.UserId = userId;
+
         _unitOfWork.PowderTemplateRepository.AddPowderTemplate(newPowder);
         await _unitOfWork.SaveAsync();
 

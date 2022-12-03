@@ -1,15 +1,18 @@
 ﻿using ArmoryManagerApi.Models;
-using ArmoryManagerApi.DataTransferObjects;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using ArmoryManagerApi.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using ArmoryManagerApi.DataTransferObjects.BulletTemplateDtos;
 
 namespace ArmoryManagerApi.Controllers;
 
 [EnableCors("CorsPolicy")]
 [Route("api/bullet")]
 [ApiController]
+[Authorize]
+[AllowAnonymous]
 public class BulletController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -24,8 +27,13 @@ public class BulletController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateBullet(CreateBulletTemplateDto newBulletDto)
     {
+        if (!long.TryParse(HttpContext.Request.Headers["UserId"].ToString(), out long userId))
+        {
+            return BadRequest("Invalid User");
+        }
+
         var newBullet = _mapper.Map<BulletTemplate>(newBulletDto);
-        newBullet.UserId = 1;
+        newBullet.UserId = userId;
 
         _unitOfWork.BulletTemplateRepository.AddBulletTemplate(newBullet);
         await _unitOfWork.SaveAsync();

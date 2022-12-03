@@ -1,7 +1,8 @@
-﻿using ArmoryManagerApi.DataTransferObjects;
+﻿using ArmoryManagerApi.DataTransferObjects.PrimerTemplateDtos;
 using ArmoryManagerApi.Interfaces;
 using ArmoryManagerApi.Models;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +11,8 @@ namespace ArmoryManagerApi.Controllers;
 [EnableCors("CorsPolicy")]
 [Route("api/primer")]
 [ApiController]
+[Authorize]
+[AllowAnonymous]
 public class PrimerTemplateController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
@@ -24,7 +27,14 @@ public class PrimerTemplateController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreatePrimer(CreatePrimerTemplateDto newPrimerDto)
     {
+        if (!long.TryParse(HttpContext.Request.Headers["UserId"].ToString(), out long userId))
+        {
+            return BadRequest("Invalid User");
+        }
+
         var newPrimer = _mapper.Map<PrimerTemplate>(newPrimerDto);
+        //newPrimer.UserId = newPrimerDto;
+
         _unitOfWork.PrimerTemplateRepository.AddPrimerTemplate(newPrimer);
         await _unitOfWork.SaveAsync();
 

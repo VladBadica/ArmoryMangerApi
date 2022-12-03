@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ArmoryManagerApi.DataTransferObjects;
+namespace ArmoryManagerApi.DataTransferObjects.BulletTemplateDtos;
 
-public class CreateBulletTemplateDto
+public class BulletTemplateDto
 {
+    public long Id { get; set; }
+
     public string? Make { get; set; }
 
     [Required]
@@ -13,4 +15,5 @@ public class CreateBulletTemplateDto
 
     [Required]
     public long Grain { get; set; }
+
 }

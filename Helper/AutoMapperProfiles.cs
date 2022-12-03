@@ -1,4 +1,10 @@
-﻿using ArmoryManagerApi.DataTransferObjects;
+﻿using ArmoryManagerApi.DataTransferObjects.BulletPurchaseDtos;
+using ArmoryManagerApi.DataTransferObjects.BulletTemplateDtos;
+using ArmoryManagerApi.DataTransferObjects.PowderPurchaseDtos;
+using ArmoryManagerApi.DataTransferObjects.PowderTemplateDtos;
+using ArmoryManagerApi.DataTransferObjects.PrimerPurchaseDtos;
+using ArmoryManagerApi.DataTransferObjects.PrimerTemplateDtos;
+using ArmoryManagerApi.DataTransferObjects.ReloadDtos;
 using ArmoryManagerApi.Models;
 using AutoMapper;
 
@@ -18,6 +24,16 @@ public class AutoMapperProfiles : Profile
         CreateMap<CreatePrimerTemplateDto, PrimerTemplate>();
         CreateMap<PrimerTemplate, PrimerTemplateDto>().ReverseMap();
 
-        CreateMap<BulletPurchase, BulletPurchaseDto>();
+        CreateMap<CreateBulletPurchaseDto, BulletPurchase>();
+        CreateMap<BulletPurchase, BulletPurchaseDto>().ReverseMap();
+
+        CreateMap<CreatePrimerPurchaseDto, PrimerPurchase>();
+        CreateMap<PrimerPurchase, PrimerPurchaseDto>().ReverseMap();
+
+        CreateMap<CreatePowderPurchaseDto, PowderPurchase>();
+        CreateMap<PowderPurchase, PowderPurchaseDto>().ReverseMap();
+
+        CreateMap<CreateReloadDto, Reload>();
+        CreateMap<Reload, ReloadDto>().ReverseMap();
     }
 }

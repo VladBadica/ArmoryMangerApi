@@ -1,4 +1,4 @@
-﻿namespace ArmoryManagerApi.DataTransferObjects;
+﻿namespace ArmoryManagerApi.DataTransferObjects.PowderTemplateDtos;
 
 public class PowderTemplateDto
 {

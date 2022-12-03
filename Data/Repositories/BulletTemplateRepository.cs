@@ -1,5 +1,4 @@
-﻿using ArmoryManagerApi.DataTransferObjects;
-using ArmoryManagerApi.Interfaces;
+﻿using ArmoryManagerApi.Interfaces;
 using ArmoryManagerApi.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,6 +29,7 @@ public class BulletTemplateRepository : IBulletTemplateRepository
 
         _context.BulletTemplates.Remove(bulletTemplate);
     }
+
     public async Task<IEnumerable<BulletTemplate>> GetAllBulletTemplatesAsync()
     {
         return await _context.BulletTemplates.ToListAsync();
