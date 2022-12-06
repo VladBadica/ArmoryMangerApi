@@ -43,10 +43,6 @@ public partial class ArmoryManagerContext : DbContext
 
             entity.HasIndex(e => e.Id, "IX_BulletPurchase_Id").IsUnique();
 
-            entity.HasOne(d => d.BulletTemplate).WithMany(p => p.BulletPurchases)
-                .HasForeignKey(d => d.BulletTemplateId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
             entity.HasOne(d => d.User).WithMany(p => p.BulletPurchases)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
@@ -67,9 +63,7 @@ public partial class ArmoryManagerContext : DbContext
         {
             entity.ToTable("PowderPurchase");
 
-            entity.HasOne(d => d.PowderTemplate).WithMany(p => p.PowderPurchases)
-                .HasForeignKey(d => d.PowderTemplateId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+            entity.Property(e => e.Make).HasDefaultValueSql("0");
 
             entity.HasOne(d => d.User).WithMany(p => p.PowderPurchases)
                 .HasForeignKey(d => d.UserId)
@@ -90,10 +84,6 @@ public partial class ArmoryManagerContext : DbContext
         modelBuilder.Entity<PrimerPurchase>(entity =>
         {
             entity.ToTable("PrimerPurchase");
-
-            entity.HasOne(d => d.PrimerTemplate).WithMany(p => p.PrimerPurchases)
-                .HasForeignKey(d => d.PrimerTemplateId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
 
             entity.HasOne(d => d.User).WithMany(p => p.PrimerPurchases)
                 .HasForeignKey(d => d.UserId)

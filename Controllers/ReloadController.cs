@@ -39,17 +39,13 @@ public class ReloadController : ControllerBase
 
         _unitOfWork.ReloadRepository.AddReload(reload);
 
+        await _unitOfWork.BulletPurchaseRepository.ConsumeBullets(newReload.BulletPurchaseId, newReload.BulletCount);
+        await _unitOfWork.PrimerPurchaseRepository.ConsumePrimers(newReload.PrimerPurchaseId, newReload.PrimerCount);
+        await _unitOfWork.PowderPurchaseRepository.ConsumePowders(newReload.PowderPurchaseId, newReload.PowderCount);
+
         await _unitOfWork.SaveAsync();
 
         return StatusCode(201);
-    }
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteReload(long id)
-    {
-        await _unitOfWork.ReloadRepository.DeleteReloadAsync(id);
-
-        return Ok(id);
     }
 
     [HttpGet]
@@ -68,21 +64,5 @@ public class ReloadController : ControllerBase
         var reloadDto = _mapper.Map<ReloadDto>(reload);
         
         return Ok(reloadDto);
-    }
-
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateReload(long id, ReloadDto updatedReloadDto)
-    {
-        if (id != updatedReloadDto.Id)
-        {
-            return BadRequest("Update not allowed");
-        }
-        var reload = await _unitOfWork.ReloadRepository.GetReloadAsync(id);
-        _mapper.Map(updatedReloadDto, reload);
-        reload.UpdatedAt = DateTime.Now.ToString(Constants.DATE_TIME_FORMAT);
-
-        await _unitOfWork.SaveAsync();
-
-        return Ok();
-    }    
+    } 
 }

@@ -8,12 +8,9 @@ public class BulletTemplateDto
 
     public string? Make { get; set; }
 
-    [Required]
-    public string Calibre { get; set; } = null!;
+    public string? Calibre { get; set; }
 
     public string? Model { get; set; }
 
-    [Required]
     public long Grain { get; set; }
-
 }

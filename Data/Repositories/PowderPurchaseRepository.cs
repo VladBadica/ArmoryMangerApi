@@ -18,6 +18,23 @@ public class PowderPurchaseRepository : IPowderPurchaseRepository
         _context.PowderPurchases.Add(newPowderPurchase);
     }
 
+    public async Task ConsumePowders(long id, long count)
+    {
+        var powderPurchase = await _context.PowderPurchases.FindAsync(id);
+
+        if (powderPurchase == null)
+        {
+            throw new Exception("Bullet puchase id not found");
+        }
+
+        if (powderPurchase.Remaining < count)
+        {
+            throw new Exception("not enough bullets remaining");
+        }
+
+        powderPurchase.Remaining -= count;
+    }
+
     public async Task DeletePowderPurchaseAsync(long id)
     {
         var powderPurchase = await _context.PowderPurchases.FindAsync(id);
@@ -31,15 +48,12 @@ public class PowderPurchaseRepository : IPowderPurchaseRepository
     }
     public async Task<IEnumerable<PowderPurchase>> GetAllPowderPurchasesAsync()
     {
-        return await _context.PowderPurchases.Include(b => b.PowderTemplate).ToListAsync();
+        return await _context.PowderPurchases.ToListAsync();
     }
 
     public async Task<PowderPurchase> GetPowderPurchaseAsync(long id)
     {
-        var powderPurchase = await _context.PowderPurchases
-            .Include(b => b.PowderTemplate)
-            .Where(b => b.Id == id)
-            .FirstAsync();
+        var powderPurchase = await _context.PowderPurchases.FindAsync(id);
 
         if (powderPurchase == null)
         {

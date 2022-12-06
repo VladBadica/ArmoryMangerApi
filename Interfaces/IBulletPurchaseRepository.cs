@@ -11,4 +11,6 @@ public interface IBulletPurchaseRepository
     Task<IEnumerable<BulletPurchase>> GetAllBulletPurchasesAsync(); 
     
     Task<BulletPurchase> GetBulletPurchaseAsync(long id);
+
+    Task ConsumeBullets(long id, long count);
 }

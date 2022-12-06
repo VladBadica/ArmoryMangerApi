@@ -7,6 +7,14 @@ public partial class BulletPurchase
 {
     public long Id { get; set; }
 
+    public long? Make { get; set; }
+
+    public string Calibre { get; set; } = null!;
+
+    public string? Model { get; set; }
+
+    public long Grain { get; set; }
+
     public string? DatePurchased { get; set; }
 
     public double? Price { get; set; }
@@ -17,13 +25,9 @@ public partial class BulletPurchase
 
     public long UserId { get; set; }
 
-    public long BulletTemplateId { get; set; }
-
     public string CreatedAt { get; set; } = null!;
 
     public string UpdatedAt { get; set; } = null!;
-
-    public virtual BulletTemplate BulletTemplate { get; set; } = null!;
 
     public virtual ICollection<Reload> Reloads { get; } = new List<Reload>();
 

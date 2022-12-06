@@ -1,8 +1,17 @@
-﻿namespace ArmoryManagerApi.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace ArmoryManagerApi.Models;
 
 public partial class PrimerPurchase
 {
     public long Id { get; set; }
+
+    public long Size { get; set; }
+
+    public string? Make { get; set; }
+
+    public string? Model { get; set; }
 
     public string? DatePurchased { get; set; }
 
@@ -14,13 +23,9 @@ public partial class PrimerPurchase
 
     public long UserId { get; set; }
 
-    public long PrimerTemplateId { get; set; }
-
     public string CreatedAt { get; set; } = null!;
 
     public string UpdatedAt { get; set; } = null!;
-
-    public virtual PrimerTemplate PrimerTemplate { get; set; } = null!;
 
     public virtual ICollection<Reload> Reloads { get; } = new List<Reload>();
 

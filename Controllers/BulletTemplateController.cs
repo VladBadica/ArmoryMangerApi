@@ -80,6 +80,6 @@ public class BulletController : ControllerBase
 
         await _unitOfWork.SaveAsync();	
 
-        return Ok();
+        return NoContent();
     }
 }

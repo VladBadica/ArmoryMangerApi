@@ -18,6 +18,23 @@ public class PrimerPurchaseRepository : IPrimerPurchaseRepository
         _context.PrimerPurchases.Add(newPrimerPurchase);
     }
 
+    public async Task ConsumePrimers(long id, long count)
+    {
+        var primerPurchase = await _context.PrimerPurchases.FindAsync(id);
+
+        if (primerPurchase == null)
+        {
+            throw new Exception("Bullet puchase id not found");
+        }
+
+        if (primerPurchase.Remaining < count)
+        {
+            throw new Exception("not enough bullets remaining");
+        }
+
+        primerPurchase.Remaining -= count;
+    }
+
     public async Task DeletePrimerPurchaseAsync(long id)
     {
         var primerPurchase = await _context.PrimerPurchases.FindAsync(id);
@@ -31,15 +48,12 @@ public class PrimerPurchaseRepository : IPrimerPurchaseRepository
     }
     public async Task<IEnumerable<PrimerPurchase>> GetAllPrimerPurchasesAsync()
     {
-        return await _context.PrimerPurchases.Include(b => b.PrimerTemplate).ToListAsync();
+        return await _context.PrimerPurchases.ToListAsync();
     }
 
     public async Task<PrimerPurchase> GetPrimerPurchaseAsync(long id)
     {
-        var primerPurchase = await _context.PrimerPurchases
-            .Include(b => b.PrimerTemplate)
-            .Where(b => b.Id == id)
-            .FirstAsync();
+        var primerPurchase = await _context.PrimerPurchases.FindAsync(id);
 
         if (primerPurchase == null)
         {

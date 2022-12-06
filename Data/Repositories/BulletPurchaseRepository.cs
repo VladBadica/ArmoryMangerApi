@@ -18,6 +18,23 @@ public class BulletPurchaseRepository :IBulletPurchaseRepository
         _context.BulletPurchases.Add(newBulletPurchase);
     }
 
+    public async Task ConsumeBullets(long id, long count)
+    {
+        var bulletPurchase = await _context.BulletPurchases.FindAsync(id); 
+        
+        if (bulletPurchase == null)
+        {
+            throw new Exception("Bullet puchase id not found");
+        }
+
+        if (bulletPurchase.Remaining < count)
+        {
+            throw new Exception("not enough bullets remaining");
+        }
+
+        bulletPurchase.Remaining -= count;
+    }
+
     public async Task DeleteBulletPurchaseAsync(long id)
     {
         var bulletPurchase = await _context.BulletPurchases.FindAsync(id);
@@ -31,15 +48,12 @@ public class BulletPurchaseRepository :IBulletPurchaseRepository
     }
     public async Task<IEnumerable<BulletPurchase>> GetAllBulletPurchasesAsync()
     {
-        return await _context.BulletPurchases.Include(b => b.BulletTemplate).ToListAsync();
+        return await _context.BulletPurchases.ToListAsync();
     }
 
     public async Task<BulletPurchase> GetBulletPurchaseAsync(long id)
     {
-        var bulletPurchase = await _context.BulletPurchases
-            .Include(b => b.BulletTemplate)
-            .Where(b => b.Id == id)
-            .FirstAsync();
+        var bulletPurchase = await _context.BulletPurchases.FindAsync(id);
 
         if (bulletPurchase == null)
         {

@@ -11,4 +11,6 @@ public interface IPowderPurchaseRepository
     Task<IEnumerable<PowderPurchase>> GetAllPowderPurchasesAsync(); 
     
     Task<PowderPurchase> GetPowderPurchaseAsync(long id);
+
+    Task ConsumePowders(long id, long count);
 }

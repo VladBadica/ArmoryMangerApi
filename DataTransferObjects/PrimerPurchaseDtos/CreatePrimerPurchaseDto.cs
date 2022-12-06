@@ -1,12 +1,14 @@
-﻿namespace ArmoryManagerApi.DataTransferObjects.PrimerPurchaseDtos;
+﻿public class CreatePrimerPurchaseDto
+{ 
+    public long Size { get; set; }
 
-public class CreatePrimerPurchaseDto
-{
+    public string? Make { get; set; }
+
+    public string? Model { get; set; }
+
     public string? DatePurchased { get; set; }
 
     public long? Price { get; set; }
 
     public long InitialCount { get; set; }
-
-    public long PrimerTemplateId { get; set; }
 }

@@ -9,6 +9,4 @@ public interface IReloadRepository
     Task<IEnumerable<Reload>> GetAllReloadsAsync();
 
     Task<Reload> GetReloadAsync(long id);
-
-    Task DeleteReloadAsync(long id);
 }

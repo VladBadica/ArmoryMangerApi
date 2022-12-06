@@ -18,23 +18,12 @@ public class ReloadRepository : IReloadRepository
         _context.Reloads.Add(newReload);
     }
 
-    public async Task DeleteReloadAsync(long id)
-    {
-        var reload = await _context.Reloads.FindAsync(id);
-
-        if(reload == null)
-        {
-            throw new Exception ("id not found");
-        }
-
-        _context.Reloads.Remove(reload);
-    }
-
     public async Task<IEnumerable<Reload>> GetAllReloadsAsync()
     {
         return await _context.Reloads
             .Include(r => r.BulletPurchase)
-            .Include(r => r.BulletPurchase.BulletTemplate)
+            .Include(r => r.PowderPurchase)
+            .Include(r => r.PrimerPurchase)
             .ToListAsync();
     }
 
@@ -42,7 +31,8 @@ public class ReloadRepository : IReloadRepository
     {
         var reload = await _context.Reloads
             .Include(r => r.BulletPurchase)
-            .Include(r => r.BulletPurchase.BulletTemplate)
+            .Include(r => r.PowderPurchase)
+            .Include(r => r.PrimerPurchase)
             .Where(r => r.Id == id)
             .FirstAsync();
 

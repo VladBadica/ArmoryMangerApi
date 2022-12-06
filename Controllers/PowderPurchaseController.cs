@@ -26,7 +26,7 @@ public class PowderPurchaseController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreatePowderPurchase(CreatePrimerPurchaseDto newPowderPurchaseDto)
+    public async Task<IActionResult> CreatePowderPurchase(CreatePowderPurchaseDto newPowderPurchaseDto)
     {
         if (!long.TryParse(HttpContext.Request.Headers["UserId"].ToString(), out long userId))
         {

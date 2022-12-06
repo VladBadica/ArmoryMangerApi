@@ -33,7 +33,7 @@ public class PowderTemplateController : ControllerBase
         }
 
         var newPowder = _mapper.Map<PowderTemplate>(newPowderDto);
-        //newPowder.UserId = userId;
+        newPowder.UserId = userId;
 
         _unitOfWork.PowderTemplateRepository.AddPowderTemplate(newPowder);
         await _unitOfWork.SaveAsync();
@@ -41,7 +41,7 @@ public class PowderTemplateController : ControllerBase
         return StatusCode(201);
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePowder(long id)
     {
         await _unitOfWork.PowderTemplateRepository.DeletePowderTemplateAsync(id);

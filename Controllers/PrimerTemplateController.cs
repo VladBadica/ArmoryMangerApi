@@ -33,7 +33,7 @@ public class PrimerTemplateController : ControllerBase
         }
 
         var newPrimer = _mapper.Map<PrimerTemplate>(newPrimerDto);
-        //newPrimer.UserId = newPrimerDto;
+        newPrimer.UserId = userId;
 
         _unitOfWork.PrimerTemplateRepository.AddPrimerTemplate(newPrimer);
         await _unitOfWork.SaveAsync();

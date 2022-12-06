@@ -1,4 +1,7 @@
-﻿namespace ArmoryManagerApi.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace ArmoryManagerApi.Models;
 
 public partial class User
 {

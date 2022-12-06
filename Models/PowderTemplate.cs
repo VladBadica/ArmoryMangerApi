@@ -13,7 +13,5 @@ public partial class PowderTemplate
 
     public long UserId { get; set; }
 
-    public virtual ICollection<PowderPurchase> PowderPurchases { get; } = new List<PowderPurchase>();
-
     public virtual User User { get; set; } = null!;
 }

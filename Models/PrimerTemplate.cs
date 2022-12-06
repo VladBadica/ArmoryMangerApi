@@ -15,7 +15,5 @@ public partial class PrimerTemplate
 
     public long UserId { get; set; }
 
-    public virtual ICollection<PrimerPurchase> PrimerPurchases { get; } = new List<PrimerPurchase>();
-
     public virtual User User { get; set; } = null!;
 }

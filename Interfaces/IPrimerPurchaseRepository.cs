@@ -11,4 +11,6 @@ public interface IPrimerPurchaseRepository
     Task<IEnumerable<PrimerPurchase>> GetAllPrimerPurchasesAsync(); 
     
     Task<PrimerPurchase> GetPrimerPurchaseAsync(long id);
+
+    Task ConsumePrimers(long id, long count);
 }
