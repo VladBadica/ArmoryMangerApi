@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ArmoryManagerApi.Models;
 
-public partial class BulletTemplate
+public partial class CasingTemplate
 {
     public long Id { get; set; }
 

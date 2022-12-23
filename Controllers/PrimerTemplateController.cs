@@ -12,7 +12,6 @@ namespace ArmoryManagerApi.Controllers;
 [Route("api/primer")]
 [ApiController]
 [Authorize]
-[AllowAnonymous]
 public class PrimerTemplateController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;

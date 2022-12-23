@@ -12,7 +12,6 @@ namespace ArmoryManagerApi.Controllers;
 [Route("api/powder")]
 [ApiController]
 [Authorize]
-[AllowAnonymous]
 public class PowderTemplateController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;

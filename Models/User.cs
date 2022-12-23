@@ -17,9 +17,9 @@ public partial class User
 
     public string UpdatedAt { get; set; } = null!;
 
-    public virtual ICollection<BulletPurchase> BulletPurchases { get; } = new List<BulletPurchase>();
+    public virtual ICollection<CasingPurchase> CasingPurchases { get; } = new List<CasingPurchase>();
 
-    public virtual ICollection<BulletTemplate> BulletTemplates { get; } = new List<BulletTemplate>();
+    public virtual ICollection<CasingTemplate> CasingTemplates { get; } = new List<CasingTemplate>();
 
     public virtual ICollection<PowderPurchase> PowderPurchases { get; } = new List<PowderPurchase>();
 

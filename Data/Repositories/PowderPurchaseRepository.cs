@@ -24,12 +24,12 @@ public class PowderPurchaseRepository : IPowderPurchaseRepository
 
         if (powderPurchase == null)
         {
-            throw new Exception("Bullet puchase id not found");
+            throw new Exception("Casing puchase id not found");
         }
 
         if (powderPurchase.Remaining < count)
         {
-            throw new Exception("not enough bullets remaining");
+            throw new Exception("not enough casings remaining");
         }
 
         powderPurchase.Remaining -= count;

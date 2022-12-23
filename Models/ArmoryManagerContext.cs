@@ -15,9 +15,9 @@ public partial class ArmoryManagerContext : DbContext
     {
     }
 
-    public virtual DbSet<BulletPurchase> BulletPurchases { get; set; }
+    public virtual DbSet<CasingPurchase> CasingPurchases { get; set; }
 
-    public virtual DbSet<BulletTemplate> BulletTemplates { get; set; }
+    public virtual DbSet<CasingTemplate> CasingTemplates { get; set; }
 
     public virtual DbSet<PowderPurchase> PowderPurchases { get; set; }
 
@@ -37,24 +37,24 @@ public partial class ArmoryManagerContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<BulletPurchase>(entity =>
+        modelBuilder.Entity<CasingPurchase>(entity =>
         {
-            entity.ToTable("BulletPurchase");
+            entity.ToTable("CasingPurchase");
 
-            entity.HasIndex(e => e.Id, "IX_BulletPurchase_Id").IsUnique();
+            entity.HasIndex(e => e.Id, "IX_CasingPurchase_Id").IsUnique();
 
-            entity.HasOne(d => d.User).WithMany(p => p.BulletPurchases)
+            entity.HasOne(d => d.User).WithMany(p => p.CasingPurchases)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
         });
 
-        modelBuilder.Entity<BulletTemplate>(entity =>
+        modelBuilder.Entity<CasingTemplate>(entity =>
         {
-            entity.ToTable("BulletTemplate");
+            entity.ToTable("CasingTemplate");
 
-            entity.HasIndex(e => e.Id, "IX_BulletTemplate_Id").IsUnique();
+            entity.HasIndex(e => e.Id, "IX_CasingTemplate_Id").IsUnique();
 
-            entity.HasOne(d => d.User).WithMany(p => p.BulletTemplates)
+            entity.HasOne(d => d.User).WithMany(p => p.CasingTemplates)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
         });
@@ -107,8 +107,8 @@ public partial class ArmoryManagerContext : DbContext
 
             entity.HasIndex(e => e.Id, "IX_Reload_Id").IsUnique();
 
-            entity.HasOne(d => d.BulletPurchase).WithMany(p => p.Reloads)
-                .HasForeignKey(d => d.BulletPurchaseId)
+            entity.HasOne(d => d.CasingPurchase).WithMany(p => p.Reloads)
+                .HasForeignKey(d => d.CasingPurchaseId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
 
             entity.HasOne(d => d.PowderPurchase).WithMany(p => p.Reloads)

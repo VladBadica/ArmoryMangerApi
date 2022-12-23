@@ -2,9 +2,9 @@
 
 public class CreateReloadDto
 {
-    public long BulletPurchaseId { get; set; }
+    public long CasingPurchaseId { get; set; }
 
-    public long BulletCount { get; set; }
+    public long CasingCount { get; set; }
 
     public long PowderPurchaseId { get; set; }
 

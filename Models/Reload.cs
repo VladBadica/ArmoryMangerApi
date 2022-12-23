@@ -7,7 +7,7 @@ public partial class Reload
 {
     public long Id { get; set; }
 
-    public long BulletPurchaseId { get; set; }
+    public long CasingPurchaseId { get; set; }
 
     public long PrimerPurchaseId { get; set; }
 
@@ -19,7 +19,7 @@ public partial class Reload
 
     public string UpdatedAt { get; set; } = null!;
 
-    public virtual BulletPurchase BulletPurchase { get; set; } = null!;
+    public virtual CasingPurchase CasingPurchase { get; set; } = null!;
 
     public virtual PowderPurchase PowderPurchase { get; set; } = null!;
 

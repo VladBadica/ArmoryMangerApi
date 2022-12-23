@@ -13,7 +13,6 @@ namespace ArmoryManagerApi.Controllers;
 [Route("api/primerPurchase")]
 [ApiController]
 [Authorize]
-[AllowAnonymous]
 public class PrimerPurchaseController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;

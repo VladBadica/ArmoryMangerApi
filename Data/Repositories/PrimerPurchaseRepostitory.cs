@@ -24,12 +24,12 @@ public class PrimerPurchaseRepository : IPrimerPurchaseRepository
 
         if (primerPurchase == null)
         {
-            throw new Exception("Bullet puchase id not found");
+            throw new Exception("Casing puchase id not found");
         }
 
         if (primerPurchase.Remaining < count)
         {
-            throw new Exception("not enough bullets remaining");
+            throw new Exception("not enough casings remaining");
         }
 
         primerPurchase.Remaining -= count;

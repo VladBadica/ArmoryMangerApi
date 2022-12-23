@@ -21,7 +21,7 @@ public class ReloadRepository : IReloadRepository
     public async Task<IEnumerable<Reload>> GetAllReloadsAsync()
     {
         return await _context.Reloads
-            .Include(r => r.BulletPurchase)
+            .Include(r => r.CasingPurchase)
             .Include(r => r.PowderPurchase)
             .Include(r => r.PrimerPurchase)
             .ToListAsync();
@@ -30,7 +30,7 @@ public class ReloadRepository : IReloadRepository
     public async Task<Reload> GetReloadAsync(long id)
     {
         var reload = await _context.Reloads
-            .Include(r => r.BulletPurchase)
+            .Include(r => r.CasingPurchase)
             .Include(r => r.PowderPurchase)
             .Include(r => r.PrimerPurchase)
             .Where(r => r.Id == id)

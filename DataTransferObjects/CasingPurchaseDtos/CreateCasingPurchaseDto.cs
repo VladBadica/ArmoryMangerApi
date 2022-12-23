@@ -1,6 +1,6 @@
-﻿namespace ArmoryManagerApi.DataTransferObjects.BulletPurchaseDtos;
+﻿namespace ArmoryManagerApi.DataTransferObjects.CasingPurchaseDtos;
 
-public class CreateBulletPurchaseDto
+public class CreateCasingPurchaseDto
 {
     public long? Make { get; set; }
 

@@ -4,13 +4,13 @@ namespace ArmoryManagerApi.Interfaces;
 
 public interface IUnitOfWork
 {
-    IBulletTemplateRepository BulletTemplateRepository { get; }
+    ICasingTemplateRepository CasingTemplateRepository { get; }
 
     IPowderTemplateRepository PowderTemplateRepository { get; }
 
     IPrimerTemplateRepository PrimerTemplateRepository { get; }
 
-    IBulletPurchaseRepository BulletPurchaseRepository { get; }
+    ICasingPurchaseRepository CasingPurchaseRepository { get; }
 
     IPowderPurchaseRepository PowderPurchaseRepository { get; }
 

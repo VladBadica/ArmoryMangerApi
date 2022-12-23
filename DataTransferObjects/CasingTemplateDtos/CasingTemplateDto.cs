@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ArmoryManagerApi.DataTransferObjects.BulletTemplateDtos;
+namespace ArmoryManagerApi.DataTransferObjects.CasingTemplateDtos;
 
-public class CreateBulletTemplateDto
+public class CasingTemplateDto
 {
+    public long Id { get; set; }
+
     public string? Make { get; set; }
 
     public string? Calibre { get; set; }

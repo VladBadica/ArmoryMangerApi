@@ -65,7 +65,6 @@ public class Program
         app.UseRouting();
 
         app.UseCors(_policy);
-        // app.UseCors(m => m.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
         app.UseAuthentication();
         app.UseAuthorization();

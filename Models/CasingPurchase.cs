@@ -1,6 +1,9 @@
-﻿namespace ArmoryManagerApi.DataTransferObjects.BulletPurchaseDtos;
+﻿using System;
+using System.Collections.Generic;
 
-public class BulletPurchaseDto
+namespace ArmoryManagerApi.Models;
+
+public partial class CasingPurchase
 {
     public long Id { get; set; }
 
@@ -20,7 +23,13 @@ public class BulletPurchaseDto
 
     public long Remaining { get; set; }
 
+    public long UserId { get; set; }
+
     public string CreatedAt { get; set; } = null!;
 
     public string UpdatedAt { get; set; } = null!;
+
+    public virtual ICollection<Reload> Reloads { get; } = new List<Reload>();
+
+    public virtual User User { get; set; } = null!;
 }
