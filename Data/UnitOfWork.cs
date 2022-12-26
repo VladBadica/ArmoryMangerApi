@@ -11,9 +11,9 @@ public class UnitOfWork : IUnitOfWork
     public ICasingTemplateRepository CasingTemplateRepository => new CasingTemplateRepository(_context);
     public IPowderTemplateRepository PowderTemplateRepository => new PowderTemplateRepository(_context);
     public IPrimerTemplateRepository PrimerTemplateRepository => new PrimerTemplateRepository(_context);
-    public ICasingPurchaseRepository CasingPurchaseRepository => new CasingPurchaseRepository(_context);
-    public IPowderPurchaseRepository PowderPurchaseRepository => new PowderPurchaseRepository(_context);
-    public IPrimerPurchaseRepository PrimerPurchaseRepository => new PrimerPurchaseRepository(_context);
+    public ICasingRepository CasingRepository => new CasingRepository(_context);
+    public IPowderRepository PowderRepository => new PowderRepository(_context);
+    public IPrimerRepository PrimerRepository => new PrimerRepository(_context);
     public IReloadRepository ReloadRepository => new ReloadRepository(_context);
     public IUserRepository UserRepository => new UserRepository(_context);
 

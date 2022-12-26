@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ArmoryManagerApi.Controllers;
 
 [EnableCors("CorsPolicy")]
-[Route("api/powder")]
+[Route("api/template/powder")]
 [ApiController]
 [Authorize]
 public class PowderTemplateController : ControllerBase

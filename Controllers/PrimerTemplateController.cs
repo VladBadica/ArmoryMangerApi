@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ArmoryManagerApi.Controllers;
 
 [EnableCors("CorsPolicy")]
-[Route("api/primer")]
+[Route("api/template/primer")]
 [ApiController]
 [Authorize]
 public class PrimerTemplateController : ControllerBase

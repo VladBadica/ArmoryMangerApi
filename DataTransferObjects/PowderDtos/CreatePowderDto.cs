@@ -1,8 +1,8 @@
-﻿public class CreatePrimerPurchaseDto
-{ 
-    public long Size { get; set; }
+﻿namespace ArmoryManagerApi.DataTransferObjects.PowderDtos;
 
-    public string? Make { get; set; }
+public class CreatePowderDto
+{
+    public string Make { get; set; } = null!;
 
     public string? Model { get; set; }
 

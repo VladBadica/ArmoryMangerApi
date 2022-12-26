@@ -7,7 +7,7 @@ public partial class PrimerTemplate
 {
     public long Id { get; set; }
 
-    public string? Size { get; set; }
+    public long? Size { get; set; }
 
     public string? Make { get; set; }
 

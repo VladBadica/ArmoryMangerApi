@@ -39,9 +39,9 @@ public class ReloadController : ControllerBase
 
         _unitOfWork.ReloadRepository.AddReload(reload);
 
-        await _unitOfWork.CasingPurchaseRepository.ConsumeCasings(newReload.CasingPurchaseId, newReload.CasingCount);
-        await _unitOfWork.PrimerPurchaseRepository.ConsumePrimers(newReload.PrimerPurchaseId, newReload.PrimerCount);
-        await _unitOfWork.PowderPurchaseRepository.ConsumePowders(newReload.PowderPurchaseId, newReload.PowderCount);
+        await _unitOfWork.CasingRepository.ConsumeCasings(newReload.CasingId, newReload.CasingCount);
+        await _unitOfWork.PrimerRepository.ConsumePrimers(newReload.PrimerId, newReload.PrimerCount);
+        await _unitOfWork.PowderRepository.ConsumePowders(newReload.PowderId, newReload.PowderCount);
 
         await _unitOfWork.SaveAsync();
 

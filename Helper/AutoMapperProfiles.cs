@@ -1,8 +1,8 @@
-﻿using ArmoryManagerApi.DataTransferObjects.CasingPurchaseDtos;
+﻿using ArmoryManagerApi.DataTransferObjects.CasingDtos;
 using ArmoryManagerApi.DataTransferObjects.CasingTemplateDtos;
-using ArmoryManagerApi.DataTransferObjects.PowderPurchaseDtos;
+using ArmoryManagerApi.DataTransferObjects.PowderDtos;
 using ArmoryManagerApi.DataTransferObjects.PowderTemplateDtos;
-using ArmoryManagerApi.DataTransferObjects.PrimerPurchaseDtos;
+using ArmoryManagerApi.DataTransferObjects.PrimerDtos;
 using ArmoryManagerApi.DataTransferObjects.PrimerTemplateDtos;
 using ArmoryManagerApi.DataTransferObjects.ReloadDtos;
 using ArmoryManagerApi.Models;
@@ -24,14 +24,14 @@ public class AutoMapperProfiles : Profile
         CreateMap<CreatePrimerTemplateDto, PrimerTemplate>();
         CreateMap<PrimerTemplate, PrimerTemplateDto>().ReverseMap();
 
-        CreateMap<CreateCasingPurchaseDto, CasingPurchase>();
-        CreateMap<CasingPurchase, CasingPurchaseDto>().ReverseMap();
+        CreateMap<CreateCasingDto, Casing>();
+        CreateMap<Casing, CasingDto>().ReverseMap();
 
-        CreateMap<CreatePrimerPurchaseDto, PrimerPurchase>();
-        CreateMap<PrimerPurchase, PrimerPurchaseDto>().ReverseMap();
+        CreateMap<CreatePrimerDto, Primer>();
+        CreateMap<Primer, PrimerDto>().ReverseMap();
 
-        CreateMap<CreatePowderPurchaseDto, PowderPurchase>();
-        CreateMap<PowderPurchase, PowderPurchaseDto>().ReverseMap();
+        CreateMap<CreatePowderDto, Powder>();
+        CreateMap<Powder, PowderDto>().ReverseMap();
 
         CreateMap<CreateReloadDto, Reload>();
         CreateMap<Reload, ReloadDto>().ReverseMap();

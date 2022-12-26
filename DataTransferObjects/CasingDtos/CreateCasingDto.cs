@@ -1,8 +1,8 @@
-﻿namespace ArmoryManagerApi.DataTransferObjects.CasingPurchaseDtos;
+﻿namespace ArmoryManagerApi.DataTransferObjects.CasingDtos;
 
-public class CreateCasingPurchaseDto
+public class CreateCasingDto
 {
-    public long? Make { get; set; }
+    public string? Make { get; set; }
 
     public string Calibre { get; set; } = null!;
 

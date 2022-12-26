@@ -9,15 +9,15 @@ using ArmoryManagerApi.DataTransferObjects.CasingTemplateDtos;
 namespace ArmoryManagerApi.Controllers;
 
 [EnableCors("CorsPolicy")]
-[Route("api/casing")]
+[Route("api/template/casing")]
 [ApiController]
 [Authorize]
-public class CasingController : ControllerBase
+public class CasingTemplateController : ControllerBase
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public CasingController(IUnitOfWork unitOfWork, IMapper mapper)
+    public CasingTemplateController(IUnitOfWork unitOfWork, IMapper mapper)
 	{
         _unitOfWork = unitOfWork;
         _mapper = mapper;

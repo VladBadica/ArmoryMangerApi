@@ -1,6 +1,6 @@
-﻿using ArmoryManagerApi.DataTransferObjects.CasingPurchaseDtos;
-using ArmoryManagerApi.DataTransferObjects.PowderPurchaseDtos;
-using ArmoryManagerApi.DataTransferObjects.PrimerPurchaseDtos;
+﻿using ArmoryManagerApi.DataTransferObjects.CasingDtos;
+using ArmoryManagerApi.DataTransferObjects.PowderDtos;
+using ArmoryManagerApi.DataTransferObjects.PrimerDtos;
 
 namespace ArmoryManagerApi.DataTransferObjects.ReloadDtos;
 
@@ -8,17 +8,17 @@ public class ReloadDto
 {
     public long Id { get; set; }
 
-    public long CasingPurchaseId { get; set; }
-    
-    public long PowderPurchaseId { get; set; }
+    public long CasingCount { get; set; }
 
-    public long PrimerPurchaseId { get; set; }
+    public long PowderCount { get; set; }
 
-    public virtual CasingPurchaseDto CasingPurchase { get; set; } = null!;
+    public long PrimerCount { get; set; }
 
-    public virtual PowderPurchaseDto PowderPurchase { get; set; } = null!;
+    public virtual CasingDto Casing{ get; set; } = null!;
 
-    public virtual PrimerPurchaseDto PrimerPurchase { get; set; } = null!;
+    public virtual PowderDto Powder { get; set; } = null!;
+
+    public virtual PrimerDto Primer{ get; set; } = null!;
 
     public string CreatedAt { get; set; } = null!;
 

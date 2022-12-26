@@ -1,18 +1,20 @@
-﻿using ArmoryManagerApi.Models;
+﻿namespace ArmoryManagerApi.DataTransferObjects.CasingDtos;
 
-namespace ArmoryManagerApi.DataTransferObjects.PowderPurchaseDtos;
-
-public class PowderPurchaseDto
+public class CasingDto
 {
     public long Id { get; set; }
 
-    public string Make { get; set; } = null!;
+    public string? Make { get; set; }
+
+    public string Calibre { get; set; } = null!;
 
     public string? Model { get; set; }
 
+    public long Grain { get; set; }
+
     public string? DatePurchased { get; set; }
 
-    public long? Price { get; set; }
+    public double? Price { get; set; }
 
     public long InitialCount { get; set; }
 

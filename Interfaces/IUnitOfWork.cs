@@ -10,11 +10,11 @@ public interface IUnitOfWork
 
     IPrimerTemplateRepository PrimerTemplateRepository { get; }
 
-    ICasingPurchaseRepository CasingPurchaseRepository { get; }
+    ICasingRepository CasingRepository { get; }
 
-    IPowderPurchaseRepository PowderPurchaseRepository { get; }
+    IPowderRepository PowderRepository { get; }
 
-    IPrimerPurchaseRepository PrimerPurchaseRepository { get; }
+    IPrimerRepository PrimerRepository { get; }
 
     IReloadRepository ReloadRepository { get; }
 

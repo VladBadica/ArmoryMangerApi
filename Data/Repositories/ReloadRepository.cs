@@ -21,18 +21,18 @@ public class ReloadRepository : IReloadRepository
     public async Task<IEnumerable<Reload>> GetAllReloadsAsync()
     {
         return await _context.Reloads
-            .Include(r => r.CasingPurchase)
-            .Include(r => r.PowderPurchase)
-            .Include(r => r.PrimerPurchase)
+            .Include(r => r.Casing)
+            .Include(r => r.Powder)
+            .Include(r => r.Primer)
             .ToListAsync();
     }
 
     public async Task<Reload> GetReloadAsync(long id)
     {
         var reload = await _context.Reloads
-            .Include(r => r.CasingPurchase)
-            .Include(r => r.PowderPurchase)
-            .Include(r => r.PrimerPurchase)
+            .Include(r => r.Casing)
+            .Include(r => r.Powder)
+            .Include(r => r.Primer)
             .Where(r => r.Id == id)
             .FirstAsync();
 

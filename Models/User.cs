@@ -17,17 +17,17 @@ public partial class User
 
     public string UpdatedAt { get; set; } = null!;
 
-    public virtual ICollection<CasingPurchase> CasingPurchases { get; } = new List<CasingPurchase>();
-
     public virtual ICollection<CasingTemplate> CasingTemplates { get; } = new List<CasingTemplate>();
 
-    public virtual ICollection<PowderPurchase> PowderPurchases { get; } = new List<PowderPurchase>();
+    public virtual ICollection<Casing> Casings { get; } = new List<Casing>();
 
     public virtual ICollection<PowderTemplate> PowderTemplates { get; } = new List<PowderTemplate>();
 
-    public virtual ICollection<PrimerPurchase> PrimerPurchases { get; } = new List<PrimerPurchase>();
+    public virtual ICollection<Powder> Powders { get; } = new List<Powder>();
 
     public virtual ICollection<PrimerTemplate> PrimerTemplates { get; } = new List<PrimerTemplate>();
+
+    public virtual ICollection<Primer> Primers { get; } = new List<Primer>();
 
     public virtual ICollection<Reload> Reloads { get; } = new List<Reload>();
 }

@@ -7,11 +7,11 @@ public partial class Reload
 {
     public long Id { get; set; }
 
-    public long CasingPurchaseId { get; set; }
+    public long CasingId { get; set; }
 
-    public long PrimerPurchaseId { get; set; }
+    public long PrimerId { get; set; }
 
-    public long PowderPurchaseId { get; set; }
+    public long PowderId { get; set; }
 
     public long UserId { get; set; }
 
@@ -19,11 +19,17 @@ public partial class Reload
 
     public string UpdatedAt { get; set; } = null!;
 
-    public virtual CasingPurchase CasingPurchase { get; set; } = null!;
+    public long CasingCount { get; set; }
 
-    public virtual PowderPurchase PowderPurchase { get; set; } = null!;
+    public long PowderCount { get; set; }
 
-    public virtual PrimerPurchase PrimerPurchase { get; set; } = null!;
+    public long PrimerCount { get; set; }
+
+    public virtual Casing Casing { get; set; } = null!;
+
+    public virtual Powder Powder { get; set; } = null!;
+
+    public virtual Primer Primer { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;
 }

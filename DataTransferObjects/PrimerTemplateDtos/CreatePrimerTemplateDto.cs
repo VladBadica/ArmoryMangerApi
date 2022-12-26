@@ -2,7 +2,7 @@
 
 public class CreatePrimerTemplateDto
 {
-    public string? Size { get; set; }
+    public long Size { get; set; }
 
     public string? Make { get; set; }
 

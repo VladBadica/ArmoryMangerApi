@@ -3,21 +3,17 @@ using System.Collections.Generic;
 
 namespace ArmoryManagerApi.Models;
 
-public partial class CasingPurchase
+public partial class Powder
 {
     public long Id { get; set; }
 
-    public long? Make { get; set; }
-
-    public string Calibre { get; set; } = null!;
+    public string Make { get; set; } = null!;
 
     public string? Model { get; set; }
 
-    public long Grain { get; set; }
-
     public string? DatePurchased { get; set; }
 
-    public double? Price { get; set; }
+    public long? Price { get; set; }
 
     public long InitialCount { get; set; }
 

@@ -1,14 +1,11 @@
-﻿using ArmoryManagerApi.Models;
+﻿
+namespace ArmoryManagerApi.DataTransferObjects.PowderDtos;
 
-namespace ArmoryManagerApi.DataTransferObjects.PrimerPurchaseDtos;
-
-public class PrimerPurchaseDto
+public class PowderDto
 {
     public long Id { get; set; }
 
-    public long Size { get; set; }
-
-    public string? Make { get; set; }
+    public string Make { get; set; } = null!;
 
     public string? Model { get; set; }
 
@@ -23,5 +20,4 @@ public class PrimerPurchaseDto
     public string CreatedAt { get; set; } = null!;
 
     public string UpdatedAt { get; set; } = null!;
-
 }
