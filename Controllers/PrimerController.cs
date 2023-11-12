@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using ArmoryManagerApi.DataTransferObjects.PrimerDtos;
 using ArmoryManagerApi.Helper;
+using ArmoryManagerApi.Data.Repositories;
 
 namespace ArmoryManagerApi.Controllers;
 
@@ -15,13 +16,15 @@ namespace ArmoryManagerApi.Controllers;
 [Authorize]
 public class PrimerController : ControllerBase
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly ArmoryManagerContext _context;
     private readonly IMapper _mapper;
+    private readonly IPrimerRepository _primerRepository;
 
-    public PrimerController(IUnitOfWork unitOfWork, IMapper mapper)
+    public PrimerController(ArmoryManagerContext context, IMapper mapper)
 	{
-        _unitOfWork = unitOfWork;
+        _context = context;
         _mapper = mapper;
+        _primerRepository = new PrimerRepository(context);
     }
 
     [HttpPost]
@@ -38,9 +41,9 @@ public class PrimerController : ControllerBase
         newPrimer.CreatedAt = DateTime.Now.ToString(Constants.DATE_TIME_FORMAT);
         newPrimer.UpdatedAt = DateTime.Now.ToString(Constants.DATE_TIME_FORMAT);
 
-        _unitOfWork.PrimerRepository.AddPrimer(newPrimer);
+        _primerRepository.AddPrimer(newPrimer);
 
-        await _unitOfWork.SaveAsync();
+        await _context.SaveChangesAsync();
 
         return StatusCode(201);
     }
@@ -48,8 +51,8 @@ public class PrimerController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePrimer(long id)
     {
-        await _unitOfWork.PrimerRepository.DeletePrimerAsync(id);
-        await _unitOfWork.SaveAsync();
+        await _primerRepository.DeletePrimerAsync(id);
+        await _context.SaveChangesAsync();
 
         return Ok(id);
     }
@@ -57,7 +60,7 @@ public class PrimerController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<PrimerDto>> GetPrimer(long id)
     {
-        var primer = await _unitOfWork.PrimerRepository.GetPrimerAsync(id);
+        var primer = await _primerRepository.GetPrimerAsync(id);
         var primerDto = _mapper.Map<PrimerDto>(primer);
 
         return Ok(primerDto);
@@ -66,7 +69,7 @@ public class PrimerController : ControllerBase
     [HttpGet]
 	public async Task<ActionResult<List<PrimerDto>>> GetAllPrimers()
 	{
-        var primers = await _unitOfWork.PrimerRepository.GetAllPrimersAsync();
+        var primers = await _primerRepository.GetAllPrimersAsync();
         var primersDto = _mapper.Map<IEnumerable<PrimerDto>>(primers);
 
         return Ok(primersDto);

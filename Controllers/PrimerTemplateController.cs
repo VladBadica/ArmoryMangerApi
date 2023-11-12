@@ -1,4 +1,5 @@
-﻿using ArmoryManagerApi.DataTransferObjects.PrimerTemplateDtos;
+﻿using ArmoryManagerApi.Data.Repositories;
+using ArmoryManagerApi.DataTransferObjects.PrimerTemplateDtos;
 using ArmoryManagerApi.Interfaces;
 using ArmoryManagerApi.Models;
 using AutoMapper;
@@ -14,13 +15,15 @@ namespace ArmoryManagerApi.Controllers;
 [Authorize]
 public class PrimerTemplateController : ControllerBase
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly ArmoryManagerContext _context;
     private readonly IMapper _mapper;
+    private readonly IPrimerTemplateRepository _primerTemplateRepository;
 
-    public PrimerTemplateController(IUnitOfWork unitOfWork, IMapper mapper)
+    public PrimerTemplateController(ArmoryManagerContext context, IMapper mapper)
     {
-        _unitOfWork = unitOfWork;
+        _context = context;
         _mapper = mapper;
+        _primerTemplateRepository = new PrimerTemplateRepository(context);
     }
 
     [HttpPost]
@@ -34,8 +37,8 @@ public class PrimerTemplateController : ControllerBase
         var newPrimer = _mapper.Map<PrimerTemplate>(newPrimerDto);
         newPrimer.UserId = userId;
 
-        _unitOfWork.PrimerTemplateRepository.AddPrimerTemplate(newPrimer);
-        await _unitOfWork.SaveAsync();
+        _primerTemplateRepository.AddPrimerTemplate(newPrimer);
+        await _context.SaveChangesAsync();
 
         return StatusCode(201);
     }
@@ -43,8 +46,8 @@ public class PrimerTemplateController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePrimer(long id)
     {
-        await _unitOfWork.PrimerTemplateRepository.DeletePrimerTemplateAsync(id);
-        await _unitOfWork.SaveAsync();
+        await _primerTemplateRepository.DeletePrimerTemplateAsync(id);
+        await _context.SaveChangesAsync();
 
         return Ok(id);
     }
@@ -52,7 +55,7 @@ public class PrimerTemplateController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllPrimers()
     {
-        var primerTemplates = await _unitOfWork.PrimerTemplateRepository.GetAllPrimerTemplatesAsync();
+        var primerTemplates = await _primerTemplateRepository.GetAllPrimerTemplatesAsync();
         var primerTemplatesDto = _mapper.Map<IEnumerable<PrimerTemplateDto>>(primerTemplates);
 
         return Ok(primerTemplatesDto);
@@ -61,7 +64,7 @@ public class PrimerTemplateController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<PrimerTemplateDto>> GetPrimer(long id)
     {
-        var primer = await _unitOfWork.PrimerTemplateRepository.GetPrimerTemplateAsync(id);
+        var primer = await _primerTemplateRepository.GetPrimerTemplateAsync(id);
         var primerDto = _mapper.Map<PrimerTemplateDto>(primer);
 
         return Ok(primerDto);
@@ -75,10 +78,10 @@ public class PrimerTemplateController : ControllerBase
             throw new Exception("id not matching");
         }
 
-        var primer = await _unitOfWork.PrimerTemplateRepository.GetPrimerTemplateAsync(id);
+        var primer = await _primerTemplateRepository.GetPrimerTemplateAsync(id);
         _mapper.Map(updatedPrimerDto, primer); 
 
-        await _unitOfWork.SaveAsync();
+        await _context.SaveChangesAsync();
 
         return NoContent();
     }

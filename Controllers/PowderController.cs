@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using ArmoryManagerApi.DataTransferObjects.PowderDtos;
 using ArmoryManagerApi.Helper;
+using ArmoryManagerApi.Data.Repositories;
 
 namespace ArmoryManagerApi.Controllers;
 
@@ -15,13 +16,15 @@ namespace ArmoryManagerApi.Controllers;
 [Authorize]
 public class PowderController : ControllerBase
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly ArmoryManagerContext _context;
     private readonly IMapper _mapper;
+    private readonly IPowderRepository _powderRepository;
 
-    public PowderController(IUnitOfWork unitOfWork, IMapper mapper)
+    public PowderController(ArmoryManagerContext context, IMapper mapper)
 	{
-        _unitOfWork = unitOfWork;
+        _context = context;
         _mapper = mapper;
+        _powderRepository = new PowderRepository(context);
     }
 
     [HttpPost]
@@ -38,9 +41,9 @@ public class PowderController : ControllerBase
         newPowder.CreatedAt = DateTime.Now.ToString(Constants.DATE_TIME_FORMAT);
         newPowder.UpdatedAt = DateTime.Now.ToString(Constants.DATE_TIME_FORMAT);
 
-        _unitOfWork.PowderRepository.AddPowder(newPowder);
+        _powderRepository.AddPowder(newPowder);
 
-        await _unitOfWork.SaveAsync();
+        await _context.SaveChangesAsync();
 
         return StatusCode(201);
     }
@@ -48,8 +51,8 @@ public class PowderController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePowder(long id)
     {
-        await _unitOfWork.PowderRepository.DeletePowderAsync(id);
-        await _unitOfWork.SaveAsync();
+        await _powderRepository.DeletePowderAsync(id);
+        await _context.SaveChangesAsync();
 
         return Ok(id);
     }
@@ -57,7 +60,7 @@ public class PowderController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<PowderDto>> GetPowder(long id)
     {
-        var powder = await _unitOfWork.PowderRepository.GetPowderAsync(id);
+        var powder = await _powderRepository.GetPowderAsync(id);
         var powderDto = _mapper.Map<PowderDto>(powder);
 
         return Ok(powderDto);
@@ -66,7 +69,7 @@ public class PowderController : ControllerBase
     [HttpGet]
 	public async Task<ActionResult<List<PowderDto>>> GetAllPowders()
 	{
-        var powders = await _unitOfWork.PowderRepository.GetAllPowdersAsync();
+        var powders = await _powderRepository.GetAllPowdersAsync();
         var powdersDto = _mapper.Map<IEnumerable<PowderDto>>(powders);
 
         return Ok(powdersDto);

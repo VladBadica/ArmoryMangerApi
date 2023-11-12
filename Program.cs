@@ -32,7 +32,6 @@ public class Program
         builder.Services.AddSwaggerGen();
         builder.Services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
         builder.Services.AddDbContext<ArmoryManagerContext>();
-        builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
         var secretKey = builder.Configuration.GetSection("AppSettings:Key").Value;
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey!));
         builder.Services

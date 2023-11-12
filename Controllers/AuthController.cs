@@ -1,8 +1,10 @@
-﻿using ArmoryManagerApi.DataTransferObjects.UserDtos;
+﻿using ArmoryManagerApi.Data.Repositories;
+using ArmoryManagerApi.DataTransferObjects.UserDtos;
 using ArmoryManagerApi.Interfaces;
 using ArmoryManagerApi.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -15,20 +17,21 @@ namespace ArmoryManagerApi.Controllers;
 [ApiController]
 public class AuthController : ControllerBase
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly ArmoryManagerContext _context;
     private readonly IConfiguration _configuration;
+    private readonly IUserRepository _userRepository;
 
-	public AuthController(IUnitOfWork unitOfWork, IConfiguration configuration)
+	public AuthController(ArmoryManagerContext context, IConfiguration configuration)
 	{
-		_unitOfWork = unitOfWork;
+        _context = context;
         _configuration = configuration;
-
+        _userRepository = new UserRepository(context);
     }
 
 	[HttpPost("login")]
 	public async Task<IActionResult> Login(LoginReqDto login)
 	{
-		var user = await _unitOfWork.UserRepository.Authenticate(login.UserName, login.Password);
+		var user = await _userRepository.Authenticate(login.UserName, login.Password);
         
         if(user == null)
         {
@@ -47,13 +50,13 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register(LoginReqDto login)
     {
-        if (await _unitOfWork.UserRepository.UserAlreadyExists(login.UserName))
+        if (await _userRepository.UserAlreadyExists(login.UserName))
         {
             return BadRequest("User already exists");
         }
 
-        _unitOfWork.UserRepository.Register(login.UserName, login.Password);
-        await _unitOfWork.SaveAsync();
+        _userRepository.Register(login.UserName, login.Password);
+        await _context.SaveChangesAsync();
 
         return StatusCode(201);
     }

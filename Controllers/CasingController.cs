@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using ArmoryManagerApi.DataTransferObjects.CasingDtos;
 using ArmoryManagerApi.Helper;
+using ArmoryManagerApi.Data.Repositories;
 
 namespace ArmoryManagerApi.Controllers;
 
@@ -15,13 +16,15 @@ namespace ArmoryManagerApi.Controllers;
 [Authorize]
 public class CasingController : ControllerBase
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly ArmoryManagerContext _context;
+    private readonly ICasingRepository _casingRepository;
     private readonly IMapper _mapper;
 
-    public CasingController(IUnitOfWork unitOfWork, IMapper mapper)
+    public CasingController(ArmoryManagerContext context, IMapper mapper)
 	{
-        _unitOfWork = unitOfWork;
+        _context = context;
         _mapper = mapper;
+        _casingRepository = new CasingRepository(context);
     }
 
     [HttpPost]
@@ -38,9 +41,9 @@ public class CasingController : ControllerBase
         newCasing.CreatedAt = DateTime.Now.ToString(Constants.DATE_TIME_FORMAT);
         newCasing.UpdatedAt = DateTime.Now.ToString(Constants.DATE_TIME_FORMAT);
 
-        _unitOfWork.CasingRepository.AddCasing(newCasing);
+        _casingRepository.AddCasing(newCasing);
 
-        await _unitOfWork.SaveAsync();
+        await _context.SaveChangesAsync();
 
         return StatusCode(201);
     }
@@ -48,8 +51,8 @@ public class CasingController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCasing(long id)
     {
-        await _unitOfWork.CasingRepository.DeleteCasingAsync(id);
-        await _unitOfWork.SaveAsync();
+        await _casingRepository.DeleteCasingAsync(id);
+        await _context.SaveChangesAsync();
 
         return Ok(id);
     }
@@ -57,7 +60,7 @@ public class CasingController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<CasingDto>> GetCasing(long id)
     {
-        var casing = await _unitOfWork.CasingRepository.GetCasingAsync(id);
+        var casing = await _casingRepository.GetCasingAsync(id);
         var casingDto = _mapper.Map<CasingDto>(casing);
 
         return Ok(casingDto);
@@ -66,7 +69,7 @@ public class CasingController : ControllerBase
     [HttpGet]
 	public async Task<ActionResult<List<CasingDto>>> GetAllCasings()
 	{
-        var casings = await _unitOfWork.CasingRepository.GetAllCasingsAsync();
+        var casings = await _casingRepository.GetAllCasingsAsync();
         var casingsDto = _mapper.Map<IEnumerable<CasingDto>>(casings);
 
         return Ok(casingsDto);

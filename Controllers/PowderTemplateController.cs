@@ -1,4 +1,5 @@
-﻿using ArmoryManagerApi.DataTransferObjects.PowderTemplateDtos;
+﻿using ArmoryManagerApi.Data.Repositories;
+using ArmoryManagerApi.DataTransferObjects.PowderTemplateDtos;
 using ArmoryManagerApi.Interfaces;
 using ArmoryManagerApi.Models;
 using AutoMapper;
@@ -14,13 +15,15 @@ namespace ArmoryManagerApi.Controllers;
 [Authorize]
 public class PowderTemplateController : ControllerBase
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly ArmoryManagerContext _context;
     private readonly IMapper _mapper; 
+    private readonly IPowderTemplateRepository _powderTemplateRepository;
 
-    public PowderTemplateController(IUnitOfWork unitOfWork, IMapper mapper)
+    public PowderTemplateController(ArmoryManagerContext context, IMapper mapper)
     {
-        _unitOfWork = unitOfWork;
+        _context = context;
         _mapper = mapper;
+        _powderTemplateRepository = new PowderTemplateRepository(context);
     }
 
     [HttpPost]
@@ -34,8 +37,8 @@ public class PowderTemplateController : ControllerBase
         var newPowder = _mapper.Map<PowderTemplate>(newPowderDto);
         newPowder.UserId = userId;
 
-        _unitOfWork.PowderTemplateRepository.AddPowderTemplate(newPowder);
-        await _unitOfWork.SaveAsync();
+        _powderTemplateRepository.AddPowderTemplate(newPowder);
+        await _context.SaveChangesAsync();
 
         return StatusCode(201);
     }
@@ -43,8 +46,8 @@ public class PowderTemplateController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePowder(long id)
     {
-        await _unitOfWork.PowderTemplateRepository.DeletePowderTemplateAsync(id);
-        await _unitOfWork.SaveAsync();
+        await _powderTemplateRepository.DeletePowderTemplateAsync(id);
+        await _context.SaveChangesAsync();
 
         return Ok(id);
     }
@@ -52,7 +55,7 @@ public class PowderTemplateController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllPowders()
     {
-        var powderTemplates = await _unitOfWork.PowderTemplateRepository.GetAllPowderTemplatesAsync();
+        var powderTemplates = await _powderTemplateRepository.GetAllPowderTemplatesAsync();
         var powderTemplatesDto = _mapper.Map<IEnumerable<PowderTemplateDto>>(powderTemplates);
 
         return Ok(powderTemplatesDto);
@@ -61,7 +64,7 @@ public class PowderTemplateController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<PowderTemplateDto>> GetPowder(long id)
     {
-        var powderTemplate = await _unitOfWork.PowderTemplateRepository.GetPowderTemplateAsync(id);
+        var powderTemplate = await _powderTemplateRepository.GetPowderTemplateAsync(id);
         var powderTemplateDto = _mapper.Map<PowderTemplateDto>(powderTemplate);
 
         return Ok(powderTemplateDto);
@@ -75,10 +78,10 @@ public class PowderTemplateController : ControllerBase
             throw new Exception("id dont match");
         }
 
-        var powderTemplate = await _unitOfWork.PowderTemplateRepository.GetPowderTemplateAsync(id);
+        var powderTemplate = await _powderTemplateRepository.GetPowderTemplateAsync(id);
         _mapper.Map(updatedPowderDto, powderTemplate);
 
-        await _unitOfWork.SaveAsync();
+        await _context.SaveChangesAsync();
 
         return NoContent();
     }  

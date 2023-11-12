@@ -5,6 +5,7 @@ using ArmoryManagerApi.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using ArmoryManagerApi.DataTransferObjects.CasingTemplateDtos;
+using ArmoryManagerApi.Data.Repositories;
 
 namespace ArmoryManagerApi.Controllers;
 
@@ -14,13 +15,15 @@ namespace ArmoryManagerApi.Controllers;
 [Authorize]
 public class CasingTemplateController : ControllerBase
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly ArmoryManagerContext _context;
+    private readonly ICasingTemplateRepository _templateRepository;
     private readonly IMapper _mapper;
 
-    public CasingTemplateController(IUnitOfWork unitOfWork, IMapper mapper)
+    public CasingTemplateController(ArmoryManagerContext context, IMapper mapper)
 	{
-        _unitOfWork = unitOfWork;
+        _context = context;
         _mapper = mapper;
+        _templateRepository = new CasingTemplateRepository(context);
     }
 
     [HttpPost]
@@ -34,8 +37,8 @@ public class CasingTemplateController : ControllerBase
         var newCasing = _mapper.Map<CasingTemplate>(newCasingDto);
         newCasing.UserId = userId;
 
-        _unitOfWork.CasingTemplateRepository.AddCasingTemplate(newCasing);
-        await _unitOfWork.SaveAsync();
+        _templateRepository.AddCasingTemplate(newCasing);
+        await _context.SaveChangesAsync();
 
         return StatusCode(201);
     }
@@ -43,8 +46,8 @@ public class CasingTemplateController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCasing(long id)
     {
-        await _unitOfWork.CasingTemplateRepository.DeleteCasingTemplateAsync(id);
-        await _unitOfWork.SaveAsync();
+        await _templateRepository.DeleteCasingTemplateAsync(id);
+        await _context.SaveChangesAsync();
 
         return Ok(id);
     }
@@ -52,7 +55,7 @@ public class CasingTemplateController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<CasingTemplateDto>>> GetAllCasings()
     {
-        var casings = await _unitOfWork.CasingTemplateRepository.GetAllCasingTemplatesAsync();
+        var casings = await _templateRepository.GetAllCasingTemplatesAsync();
         var casingsDto = _mapper.Map<IEnumerable<CasingTemplateDto>>(casings);
 
         return Ok(casingsDto);
@@ -61,7 +64,7 @@ public class CasingTemplateController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<CasingTemplateDto>> GetCasing(long id)
     {
-        var casing = await _unitOfWork.CasingTemplateRepository.GetCasingTemplateAsync(id);
+        var casing = await _templateRepository.GetCasingTemplateAsync(id);
         var casingDto = _mapper.Map<CasingTemplateDto>(casing);
 
         return Ok(casingDto);
@@ -74,10 +77,10 @@ public class CasingTemplateController : ControllerBase
         {
             return BadRequest("Update not allowed");
         }
-        var updatedCasing = await _unitOfWork.CasingTemplateRepository.GetCasingTemplateAsync(id);
+        var updatedCasing = await _templateRepository.GetCasingTemplateAsync(id);
         _mapper.Map(updatedCasingDto, updatedCasing);
 
-        await _unitOfWork.SaveAsync();	
+        await _context.SaveChangesAsync();	
 
         return NoContent();
     }

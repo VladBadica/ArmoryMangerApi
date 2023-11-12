@@ -1,4 +1,5 @@
-﻿using ArmoryManagerApi.DataTransferObjects.ReloadDtos;
+﻿using ArmoryManagerApi.Data.Repositories;
+using ArmoryManagerApi.DataTransferObjects.ReloadDtos;
 using ArmoryManagerApi.Helper;
 using ArmoryManagerApi.Interfaces;
 using ArmoryManagerApi.Models;
@@ -15,13 +16,20 @@ namespace ArmoryManagerApi.Controllers;
 [Authorize]
 public class ReloadController : ControllerBase
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly ArmoryManagerContext _context;
     private readonly IMapper _mapper;
-
-    public ReloadController(IUnitOfWork unitOfWork, IMapper mapper)
+    private readonly IReloadRepository _reloadRepository;
+    private readonly ICasingRepository _casingRepository;
+    private readonly IPrimerRepository _primerRepository;
+    private readonly IPowderRepository _powderRepository;
+    public ReloadController(ArmoryManagerContext context, IMapper mapper)
     {
-        _unitOfWork = unitOfWork;
+        _context = context;
         _mapper = mapper;
+        _reloadRepository = new ReloadRepository(context);
+        _casingRepository = new CasingRepository(context);
+        _primerRepository = new PrimerRepository(context);
+        _powderRepository = new PowderRepository(context);
     }
 
     [HttpPost]
@@ -37,13 +45,13 @@ public class ReloadController : ControllerBase
         reload.CreatedAt = DateTime.Now.ToString(Constants.DATE_TIME_FORMAT);
         reload.UpdatedAt = DateTime.Now.ToString(Constants.DATE_TIME_FORMAT);
 
-        _unitOfWork.ReloadRepository.AddReload(reload);
+        _reloadRepository.AddReload(reload);
 
-        await _unitOfWork.CasingRepository.ConsumeCasings(newReload.CasingId, newReload.CasingCount);
-        await _unitOfWork.PrimerRepository.ConsumePrimers(newReload.PrimerId, newReload.PrimerCount);
-        await _unitOfWork.PowderRepository.ConsumePowders(newReload.PowderId, newReload.PowderCount);
+        await _casingRepository.ConsumeCasings(newReload.CasingId, newReload.CasingCount);
+        await _primerRepository.ConsumePrimers(newReload.PrimerId, newReload.PrimerCount);
+        await _powderRepository.ConsumePowders(newReload.PowderId, newReload.PowderCount);
 
-        await _unitOfWork.SaveAsync();
+        await _context.SaveChangesAsync();
 
         return StatusCode(201);
     }
@@ -51,7 +59,7 @@ public class ReloadController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllReloads()
     {     
-        var reloads = await _unitOfWork.ReloadRepository.GetAllReloadsAsync();
+        var reloads = await _reloadRepository.GetAllReloadsAsync();
         var reloadsDto = _mapper.Map<IEnumerable<ReloadDto>>(reloads);
 
         return Ok(reloadsDto);
@@ -60,7 +68,7 @@ public class ReloadController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetReload(long id)
     {
-        var reload = await _unitOfWork.ReloadRepository.GetReloadAsync(id);
+        var reload = await _reloadRepository.GetReloadAsync(id);
         var reloadDto = _mapper.Map<ReloadDto>(reload);
         
         return Ok(reloadDto);
