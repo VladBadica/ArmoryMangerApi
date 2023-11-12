@@ -5,8 +5,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using ArmoryManagerApi.ViewModels;
 using ArmoryManagerApi.Helper;
-using ArmoryManagerApi.Utils;
-using Microsoft.EntityFrameworkCore;
 
 namespace ArmoryManagerApi.Controllers;
 
@@ -62,9 +60,9 @@ public class PowderController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<PowderVM>> GetPowder(long id)
+    public ActionResult<PowderVM> GetPowder(long id)
     {
-        var powder = await _context.Powders.FindAsync(id);
+        var powder = _context.Powders.Find(id);
         if (powder == null)
         {
             throw new Exception("Powder puchase id not found");
@@ -76,9 +74,9 @@ public class PowderController : ControllerBase
     }
 
     [HttpGet]
-	public async Task<ActionResult<List<PowderVM>>> GetAllPowders()
+	public ActionResult<List<PowderVM>> GetAllPowders()
 	{
-        var powders = await _context.Powders.ToListAsync();
+        var powders = _context.Powders.ToList();
         var powdersDto = _mapper.Map<IEnumerable<PowderVM>>(powders);
 
         return Ok(powdersDto);

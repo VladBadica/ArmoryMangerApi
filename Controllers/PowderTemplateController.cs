@@ -56,7 +56,7 @@ public class PowderTemplateController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<PowderTemplateVM> GetAllPowders()
+    public ActionResult<List<PowderTemplateVM>> GetAllPowders()
     {
         var powderTemplates = _context.PowderTemplates.ToList();
         var powderTemplatesDto = _mapper.Map<IEnumerable<PowderTemplateVM>>(powderTemplates);
@@ -65,9 +65,9 @@ public class PowderTemplateController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetPowder(long id)
+    public ActionResult<PowderVM> GetPowder(long id)
     {
-        var powderTemplate = await _context.PowderTemplates.FindAsync(id);
+        var powderTemplate = _context.PowderTemplates.Find(id);
         if (powderTemplate == null)
         {
             throw new Exception("id not found");
@@ -86,7 +86,7 @@ public class PowderTemplateController : ControllerBase
             throw new Exception("id dont match");
         }
 
-        var powderTemplate = await _context.PowderTemplates.FindAsync(id);
+        var powderTemplate = _context.PowderTemplates.Find(id);
 
         if (powderTemplate == null)
         {

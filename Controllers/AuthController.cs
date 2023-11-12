@@ -7,7 +7,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 
 namespace ArmoryManagerApi.Controllers;
@@ -27,9 +26,9 @@ public class AuthController : ControllerBase
     }
 
 	[HttpPost("login")]
-	public async Task<IActionResult> Login(LoginReqVM login)
+	public ActionResult<LoginResVM> Login(LoginReqVM login)
 	{
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == login.UserName);
+        var user = _context.Users.FirstOrDefault(u => u.UserName == login.UserName);
 
         if (user == null || user.Salt == null)
         {
@@ -56,7 +55,7 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register(LoginReqVM login)
     {
-        if (await _context.Users.AnyAsync(x => x.UserName == login.UserName))
+        if (_context.Users.Any(x => x.UserName == login.UserName))
         {
             return BadRequest("User already exists");
         }

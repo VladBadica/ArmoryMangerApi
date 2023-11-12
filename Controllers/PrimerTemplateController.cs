@@ -55,7 +55,7 @@ public class PrimerTemplateController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<PrimerTemplateVM> GetAllPrimers()
+    public ActionResult<List<PrimerTemplateVM>> GetAllPrimers()
     {
         var primerTemplates = _context.PrimerTemplates.ToList();
         var primerTemplatesDto = _mapper.Map<IEnumerable<PrimerTemplateVM>>(primerTemplates);

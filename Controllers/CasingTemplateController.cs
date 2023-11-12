@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using ArmoryManagerApi.ViewModels;
-using Microsoft.EntityFrameworkCore;
 
 namespace ArmoryManagerApi.Controllers;
 
@@ -57,9 +56,9 @@ public class CasingTemplateController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllCasings()
+    public ActionResult<List<CasingTemplateVM>> GetAllCasings()
     {
-        var casings = await _context.CasingTemplates.ToListAsync();
+        var casings = _context.CasingTemplates.ToList();
         var casingsDto = _mapper.Map<IEnumerable<CasingTemplateVM>>(casings);
 
         return Ok(casingsDto);
@@ -88,7 +87,7 @@ public class CasingTemplateController : ControllerBase
             return BadRequest("Update not allowed");
         }
 
-        var updatedCasing = await _context.CasingTemplates.FindAsync(id);
+        var updatedCasing = _context.CasingTemplates.Find(id);
         if (updatedCasing == null)
         {
             throw new Exception("Casing template id was not found");

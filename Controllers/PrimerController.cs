@@ -75,7 +75,7 @@ public class PrimerController : ControllerBase
     }
 
     [HttpGet]
-	public ActionResult<PrimerVM> GetAllPrimers()
+	public ActionResult<List<PrimerVM>> GetAllPrimers()
 	{
         var primers = _context.Primers.ToList();
         var primersDto = _mapper.Map<IEnumerable<PrimerVM>>(primers);

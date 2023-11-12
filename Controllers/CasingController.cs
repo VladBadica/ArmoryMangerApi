@@ -5,8 +5,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using ArmoryManagerApi.ViewModels;
 using ArmoryManagerApi.Helper;
-using ArmoryManagerApi.Utils;
-using Microsoft.EntityFrameworkCore;
 
 namespace ArmoryManagerApi.Controllers;
 
@@ -62,9 +60,9 @@ public class CasingController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<CasingVM>> GetCasing(long id)
+    public ActionResult<CasingVM> GetCasing(long id)
     {
-        var casing = await _context.Casings.FindAsync(id);
+        var casing = _context.Casings.Find(id);
 
         if (casing == null)
         {
@@ -77,9 +75,9 @@ public class CasingController : ControllerBase
     }
 
     [HttpGet]
-	public async Task<ActionResult<List<CasingVM>>> GetAllCasings()
+	public ActionResult<List<CasingVM>> GetAllCasings()
 	{
-        var casings = await _context.Casings.ToListAsync();
+        var casings = _context.Casings.ToList();
         var casingsDto = _mapper.Map<IEnumerable<CasingVM>>(casings);
 
         return Ok(casingsDto);
