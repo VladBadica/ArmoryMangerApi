@@ -1,12 +1,10 @@
 ﻿using ArmoryManagerApi.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using ArmoryManagerApi.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using ArmoryManagerApi.DataTransferObjects.PrimerDtos;
+using ArmoryManagerApi.ViewModels;
 using ArmoryManagerApi.Helper;
-using ArmoryManagerApi.Data.Repositories;
 
 namespace ArmoryManagerApi.Controllers;
 
@@ -18,17 +16,15 @@ public class PrimerController : ControllerBase
 {
     private readonly ArmoryManagerContext _context;
     private readonly IMapper _mapper;
-    private readonly IPrimerRepository _primerRepository;
 
     public PrimerController(ArmoryManagerContext context, IMapper mapper)
 	{
         _context = context;
         _mapper = mapper;
-        _primerRepository = new PrimerRepository(context);
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreatePrimer(CreatePrimerDto newPrimerDto)
+    public async Task<IActionResult> CreatePrimer(CreatePrimerVM newPrimerDto)
     {
         if (!long.TryParse(HttpContext.Request.Headers["UserId"].ToString(), out long userId))
         {
@@ -41,7 +37,7 @@ public class PrimerController : ControllerBase
         newPrimer.CreatedAt = DateTime.Now.ToString(Constants.DATE_TIME_FORMAT);
         newPrimer.UpdatedAt = DateTime.Now.ToString(Constants.DATE_TIME_FORMAT);
 
-        _primerRepository.AddPrimer(newPrimer);
+        _context.Primers.Add(newPrimer);
 
         await _context.SaveChangesAsync();
 
@@ -51,26 +47,38 @@ public class PrimerController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePrimer(long id)
     {
-        await _primerRepository.DeletePrimerAsync(id);
+        var primer = _context.Primers.Find(id);
+
+        if (primer == null)
+        {
+            throw new Exception("Primer puchase id not found");
+        }
+
+        _context.Primers.Remove(primer);
         await _context.SaveChangesAsync();
 
         return Ok(id);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<PrimerDto>> GetPrimer(long id)
+    public ActionResult<PrimerVM> GetPrimer(long id)
     {
-        var primer = await _primerRepository.GetPrimerAsync(id);
-        var primerDto = _mapper.Map<PrimerDto>(primer);
+        var primer = _context.Primers.Find(id);
+        if (primer == null)
+        {
+            throw new Exception("Primer puchase id not found");
+        }
+
+        var primerDto = _mapper.Map<PrimerVM>(primer);
 
         return Ok(primerDto);
     }
 
     [HttpGet]
-	public async Task<ActionResult<List<PrimerDto>>> GetAllPrimers()
+	public ActionResult<PrimerVM> GetAllPrimers()
 	{
-        var primers = await _primerRepository.GetAllPrimersAsync();
-        var primersDto = _mapper.Map<IEnumerable<PrimerDto>>(primers);
+        var primers = _context.Primers.ToList();
+        var primersDto = _mapper.Map<IEnumerable<PrimerVM>>(primers);
 
         return Ok(primersDto);
 	}

@@ -1,12 +1,12 @@
 ﻿using ArmoryManagerApi.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using ArmoryManagerApi.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using ArmoryManagerApi.DataTransferObjects.PowderDtos;
+using ArmoryManagerApi.ViewModels;
 using ArmoryManagerApi.Helper;
-using ArmoryManagerApi.Data.Repositories;
+using ArmoryManagerApi.Utils;
+using Microsoft.EntityFrameworkCore;
 
 namespace ArmoryManagerApi.Controllers;
 
@@ -18,17 +18,15 @@ public class PowderController : ControllerBase
 {
     private readonly ArmoryManagerContext _context;
     private readonly IMapper _mapper;
-    private readonly IPowderRepository _powderRepository;
 
     public PowderController(ArmoryManagerContext context, IMapper mapper)
 	{
         _context = context;
         _mapper = mapper;
-        _powderRepository = new PowderRepository(context);
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreatePowder(CreatePowderDto newPowderDto)
+    public async Task<IActionResult> CreatePowder(CreatePowderVM newPowderDto)
     {
         if (!long.TryParse(HttpContext.Request.Headers["UserId"].ToString(), out long userId))
         {
@@ -41,8 +39,7 @@ public class PowderController : ControllerBase
         newPowder.CreatedAt = DateTime.Now.ToString(Constants.DATE_TIME_FORMAT);
         newPowder.UpdatedAt = DateTime.Now.ToString(Constants.DATE_TIME_FORMAT);
 
-        _powderRepository.AddPowder(newPowder);
-
+        _context.Powders.Add(newPowder);
         await _context.SaveChangesAsync();
 
         return StatusCode(201);
@@ -51,26 +48,38 @@ public class PowderController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePowder(long id)
     {
-        await _powderRepository.DeletePowderAsync(id);
+        var powder = _context.Powders.Find(id);
+
+        if (powder == null)
+        {
+            throw new Exception("Powder puchase id not found");
+        }
+
+        _context.Powders.Remove(powder);
         await _context.SaveChangesAsync();
 
         return Ok(id);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<PowderDto>> GetPowder(long id)
+    public async Task<ActionResult<PowderVM>> GetPowder(long id)
     {
-        var powder = await _powderRepository.GetPowderAsync(id);
-        var powderDto = _mapper.Map<PowderDto>(powder);
+        var powder = await _context.Powders.FindAsync(id);
+        if (powder == null)
+        {
+            throw new Exception("Powder puchase id not found");
+        }
+
+        var powderDto = _mapper.Map<PowderVM>(powder);
 
         return Ok(powderDto);
     }
 
     [HttpGet]
-	public async Task<ActionResult<List<PowderDto>>> GetAllPowders()
+	public async Task<ActionResult<List<PowderVM>>> GetAllPowders()
 	{
-        var powders = await _powderRepository.GetAllPowdersAsync();
-        var powdersDto = _mapper.Map<IEnumerable<PowderDto>>(powders);
+        var powders = await _context.Powders.ToListAsync();
+        var powdersDto = _mapper.Map<IEnumerable<PowderVM>>(powders);
 
         return Ok(powdersDto);
 	}

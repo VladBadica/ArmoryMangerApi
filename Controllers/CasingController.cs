@@ -1,12 +1,12 @@
 ﻿using ArmoryManagerApi.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using ArmoryManagerApi.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using ArmoryManagerApi.DataTransferObjects.CasingDtos;
+using ArmoryManagerApi.ViewModels;
 using ArmoryManagerApi.Helper;
-using ArmoryManagerApi.Data.Repositories;
+using ArmoryManagerApi.Utils;
+using Microsoft.EntityFrameworkCore;
 
 namespace ArmoryManagerApi.Controllers;
 
@@ -17,18 +17,16 @@ namespace ArmoryManagerApi.Controllers;
 public class CasingController : ControllerBase
 {
     private readonly ArmoryManagerContext _context;
-    private readonly ICasingRepository _casingRepository;
     private readonly IMapper _mapper;
 
     public CasingController(ArmoryManagerContext context, IMapper mapper)
 	{
         _context = context;
         _mapper = mapper;
-        _casingRepository = new CasingRepository(context);
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateCasing(CreateCasingDto newCasingDto)
+    public async Task<IActionResult> CreateCasing(CreateCasingVM newCasingDto)
     {
         if (!long.TryParse(HttpContext.Request.Headers["UserId"].ToString(), out long userId))
         {
@@ -41,8 +39,7 @@ public class CasingController : ControllerBase
         newCasing.CreatedAt = DateTime.Now.ToString(Constants.DATE_TIME_FORMAT);
         newCasing.UpdatedAt = DateTime.Now.ToString(Constants.DATE_TIME_FORMAT);
 
-        _casingRepository.AddCasing(newCasing);
-
+        _context.Casings.Add(newCasing);
         await _context.SaveChangesAsync();
 
         return StatusCode(201);
@@ -51,26 +48,39 @@ public class CasingController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCasing(long id)
     {
-        await _casingRepository.DeleteCasingAsync(id);
+        var casing = _context.Casings.Find(id);
+
+        if (casing == null)
+        {
+            throw new Exception("Casing puchase id not found");
+        }
+
+        _context.Casings.Remove(casing);
         await _context.SaveChangesAsync();
 
         return Ok(id);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<CasingDto>> GetCasing(long id)
+    public async Task<ActionResult<CasingVM>> GetCasing(long id)
     {
-        var casing = await _casingRepository.GetCasingAsync(id);
-        var casingDto = _mapper.Map<CasingDto>(casing);
+        var casing = await _context.Casings.FindAsync(id);
+
+        if (casing == null)
+        {
+            throw new Exception("Casing puchase id not found");
+        }
+
+        var casingDto = _mapper.Map<CasingVM>(casing);
 
         return Ok(casingDto);
     }
 
     [HttpGet]
-	public async Task<ActionResult<List<CasingDto>>> GetAllCasings()
+	public async Task<ActionResult<List<CasingVM>>> GetAllCasings()
 	{
-        var casings = await _casingRepository.GetAllCasingsAsync();
-        var casingsDto = _mapper.Map<IEnumerable<CasingDto>>(casings);
+        var casings = await _context.Casings.ToListAsync();
+        var casingsDto = _mapper.Map<IEnumerable<CasingVM>>(casings);
 
         return Ok(casingsDto);
 	}

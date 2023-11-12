@@ -1,11 +1,10 @@
 ﻿using ArmoryManagerApi.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using ArmoryManagerApi.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using ArmoryManagerApi.DataTransferObjects.CasingTemplateDtos;
-using ArmoryManagerApi.Data.Repositories;
+using ArmoryManagerApi.ViewModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace ArmoryManagerApi.Controllers;
 
@@ -16,18 +15,16 @@ namespace ArmoryManagerApi.Controllers;
 public class CasingTemplateController : ControllerBase
 {
     private readonly ArmoryManagerContext _context;
-    private readonly ICasingTemplateRepository _templateRepository;
     private readonly IMapper _mapper;
 
     public CasingTemplateController(ArmoryManagerContext context, IMapper mapper)
 	{
         _context = context;
         _mapper = mapper;
-        _templateRepository = new CasingTemplateRepository(context);
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateCasing(CreateCasingTemplateDto newCasingDto)
+    public async Task<IActionResult> CreateCasing(CreateCasingTemplateVM newCasingDto)
     {
         if (!long.TryParse(HttpContext.Request.Headers["UserId"].ToString(), out long userId))
         {
@@ -37,7 +34,7 @@ public class CasingTemplateController : ControllerBase
         var newCasing = _mapper.Map<CasingTemplate>(newCasingDto);
         newCasing.UserId = userId;
 
-        _templateRepository.AddCasingTemplate(newCasing);
+        _context.CasingTemplates.Add(newCasing);
         await _context.SaveChangesAsync();
 
         return StatusCode(201);
@@ -46,38 +43,56 @@ public class CasingTemplateController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCasing(long id)
     {
-        await _templateRepository.DeleteCasingTemplateAsync(id);
+        var casingTemplate = _context.CasingTemplates.Find(id);
+
+        if (casingTemplate == null)
+        {
+            throw new Exception("Casing template id was not found");
+        }
+
+        _context.CasingTemplates.Remove(casingTemplate);
         await _context.SaveChangesAsync();
 
         return Ok(id);
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<CasingTemplateDto>>> GetAllCasings()
+    public async Task<IActionResult> GetAllCasings()
     {
-        var casings = await _templateRepository.GetAllCasingTemplatesAsync();
-        var casingsDto = _mapper.Map<IEnumerable<CasingTemplateDto>>(casings);
+        var casings = await _context.CasingTemplates.ToListAsync();
+        var casingsDto = _mapper.Map<IEnumerable<CasingTemplateVM>>(casings);
 
         return Ok(casingsDto);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<CasingTemplateDto>> GetCasing(long id)
+    public ActionResult<CasingTemplateVM> GetCasing(long id)
     {
-        var casing = await _templateRepository.GetCasingTemplateAsync(id);
-        var casingDto = _mapper.Map<CasingTemplateDto>(casing);
+        var casingTemplate = _context.CasingTemplates.Find(id);
+
+        if (casingTemplate == null)
+        {
+            throw new Exception("Casing template id was not found");
+        }
+
+        var casingDto = _mapper.Map<CasingTemplateVM>(casingTemplate);
 
         return Ok(casingDto);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateCasing(long id, CasingTemplateDto updatedCasingDto)
+    public async Task<IActionResult> UpdateCasing(long id, CasingTemplateVM updatedCasingDto)
     {       
         if(id != updatedCasingDto.Id)
         {
             return BadRequest("Update not allowed");
         }
-        var updatedCasing = await _templateRepository.GetCasingTemplateAsync(id);
+
+        var updatedCasing = await _context.CasingTemplates.FindAsync(id);
+        if (updatedCasing == null)
+        {
+            throw new Exception("Casing template id was not found");
+        }
         _mapper.Map(updatedCasingDto, updatedCasing);
 
         await _context.SaveChangesAsync();	

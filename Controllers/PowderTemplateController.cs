@@ -1,6 +1,4 @@
-﻿using ArmoryManagerApi.Data.Repositories;
-using ArmoryManagerApi.DataTransferObjects.PowderTemplateDtos;
-using ArmoryManagerApi.Interfaces;
+﻿using ArmoryManagerApi.ViewModels;
 using ArmoryManagerApi.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -16,28 +14,26 @@ namespace ArmoryManagerApi.Controllers;
 public class PowderTemplateController : ControllerBase
 {
     private readonly ArmoryManagerContext _context;
-    private readonly IMapper _mapper; 
-    private readonly IPowderTemplateRepository _powderTemplateRepository;
+    private readonly IMapper _mapper;
 
     public PowderTemplateController(ArmoryManagerContext context, IMapper mapper)
     {
         _context = context;
         _mapper = mapper;
-        _powderTemplateRepository = new PowderTemplateRepository(context);
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreatePowder(CreatePowderTemplateDto newPowderDto)
+    public async Task<IActionResult> CreatePowder(CreatePowderTemplateVM newPowderDto)
     {
         if (!long.TryParse(HttpContext.Request.Headers["UserId"].ToString(), out long userId))
         {
             return BadRequest("Invalid User");
         }
 
-        var newPowder = _mapper.Map<PowderTemplate>(newPowderDto);
-        newPowder.UserId = userId;
+        var newPowderTemplate = _mapper.Map<PowderTemplate>(newPowderDto);
+        newPowderTemplate.UserId = userId;
 
-        _powderTemplateRepository.AddPowderTemplate(newPowder);
+        _context.PowderTemplates.Add(newPowderTemplate);
         await _context.SaveChangesAsync();
 
         return StatusCode(201);
@@ -46,39 +42,56 @@ public class PowderTemplateController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePowder(long id)
     {
-        await _powderTemplateRepository.DeletePowderTemplateAsync(id);
+        var powderTemplate = _context.PowderTemplates.Find(id);
+
+        if (powderTemplate == null)
+        {
+            throw new Exception("id not found");
+        }
+
+        _context.PowderTemplates.Remove(powderTemplate);
         await _context.SaveChangesAsync();
 
         return Ok(id);
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllPowders()
+    public ActionResult<PowderTemplateVM> GetAllPowders()
     {
-        var powderTemplates = await _powderTemplateRepository.GetAllPowderTemplatesAsync();
-        var powderTemplatesDto = _mapper.Map<IEnumerable<PowderTemplateDto>>(powderTemplates);
+        var powderTemplates = _context.PowderTemplates.ToList();
+        var powderTemplatesDto = _mapper.Map<IEnumerable<PowderTemplateVM>>(powderTemplates);
 
         return Ok(powderTemplatesDto);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<PowderTemplateDto>> GetPowder(long id)
+    public async Task<IActionResult> GetPowder(long id)
     {
-        var powderTemplate = await _powderTemplateRepository.GetPowderTemplateAsync(id);
-        var powderTemplateDto = _mapper.Map<PowderTemplateDto>(powderTemplate);
+        var powderTemplate = await _context.PowderTemplates.FindAsync(id);
+        if (powderTemplate == null)
+        {
+            throw new Exception("id not found");
+        }
+
+        var powderTemplateDto = _mapper.Map<PowderTemplateVM>(powderTemplate);
 
         return Ok(powderTemplateDto);
     }
         
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdatePowder(long id, PowderTemplateDto updatedPowderDto)
+    public async Task<IActionResult> UpdatePowder(long id, PowderTemplateVM updatedPowderDto)
     {
         if(id != updatedPowderDto.Id)
         {
             throw new Exception("id dont match");
         }
 
-        var powderTemplate = await _powderTemplateRepository.GetPowderTemplateAsync(id);
+        var powderTemplate = await _context.PowderTemplates.FindAsync(id);
+
+        if (powderTemplate == null)
+        {
+            throw new Exception("id not found");
+        }
         _mapper.Map(updatedPowderDto, powderTemplate);
 
         await _context.SaveChangesAsync();

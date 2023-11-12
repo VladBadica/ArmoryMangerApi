@@ -1,6 +1,4 @@
-﻿using ArmoryManagerApi.Data.Repositories;
-using ArmoryManagerApi.DataTransferObjects.PrimerTemplateDtos;
-using ArmoryManagerApi.Interfaces;
+﻿using ArmoryManagerApi.ViewModels;
 using ArmoryManagerApi.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -17,27 +15,25 @@ public class PrimerTemplateController : ControllerBase
 {
     private readonly ArmoryManagerContext _context;
     private readonly IMapper _mapper;
-    private readonly IPrimerTemplateRepository _primerTemplateRepository;
 
     public PrimerTemplateController(ArmoryManagerContext context, IMapper mapper)
     {
         _context = context;
         _mapper = mapper;
-        _primerTemplateRepository = new PrimerTemplateRepository(context);
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreatePrimer(CreatePrimerTemplateDto newPrimerDto)
+    public async Task<IActionResult> CreatePrimer(CreatePrimerTemplateVM newPrimerTemplateDto)
     {
         if (!long.TryParse(HttpContext.Request.Headers["UserId"].ToString(), out long userId))
         {
             return BadRequest("Invalid User");
         }
 
-        var newPrimer = _mapper.Map<PrimerTemplate>(newPrimerDto);
-        newPrimer.UserId = userId;
+        var newPrimerTemplate = _mapper.Map<PrimerTemplate>(newPrimerTemplateDto);
+        newPrimerTemplate.UserId = userId;
 
-        _primerTemplateRepository.AddPrimerTemplate(newPrimer);
+        _context.PrimerTemplates.Add(newPrimerTemplate);
         await _context.SaveChangesAsync();
 
         return StatusCode(201);
@@ -46,40 +42,54 @@ public class PrimerTemplateController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePrimer(long id)
     {
-        await _primerTemplateRepository.DeletePrimerTemplateAsync(id);
+        var primerTemplate = _context.PrimerTemplates.Find(id);
+        if (primerTemplate == null)
+        {
+            throw new Exception("id not found");
+        }
+
+        _context.PrimerTemplates.Remove(primerTemplate);
         await _context.SaveChangesAsync();
 
         return Ok(id);
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllPrimers()
+    public ActionResult<PrimerTemplateVM> GetAllPrimers()
     {
-        var primerTemplates = await _primerTemplateRepository.GetAllPrimerTemplatesAsync();
-        var primerTemplatesDto = _mapper.Map<IEnumerable<PrimerTemplateDto>>(primerTemplates);
+        var primerTemplates = _context.PrimerTemplates.ToList();
+        var primerTemplatesDto = _mapper.Map<IEnumerable<PrimerTemplateVM>>(primerTemplates);
 
         return Ok(primerTemplatesDto);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<PrimerTemplateDto>> GetPrimer(long id)
+    public ActionResult<PrimerTemplateVM> GetPrimer(long id)
     {
-        var primer = await _primerTemplateRepository.GetPrimerTemplateAsync(id);
-        var primerDto = _mapper.Map<PrimerTemplateDto>(primer);
+        var primerTemplate = _context.PrimerTemplates.Find(id);
+        if (primerTemplate == null)
+        {
+            throw new Exception("id not found");
+        }
 
-        return Ok(primerDto);
+        return Ok(_mapper.Map<PrimerTemplateVM>(primerTemplate));
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdatePrimer(long id, PrimerTemplateDto updatedPrimerDto)
+    public async Task<IActionResult> UpdatePrimer(long id, PrimerTemplateVM updatedPrimerDto)
     {
         if(id != updatedPrimerDto.Id)
         {
             throw new Exception("id not matching");
         }
 
-        var primer = await _primerTemplateRepository.GetPrimerTemplateAsync(id);
-        _mapper.Map(updatedPrimerDto, primer); 
+        var primerTemplate = _context.PrimerTemplates.Find(id);
+        if (primerTemplate == null)
+        {
+            throw new Exception("id not found");
+        }
+        
+        _mapper.Map(updatedPrimerDto, primerTemplate); 
 
         await _context.SaveChangesAsync();
 

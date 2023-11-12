@@ -1,6 +1,4 @@
-using ArmoryManagerApi.Data;
 using ArmoryManagerApi.Helper;
-using ArmoryManagerApi.Interfaces;
 using ArmoryManagerApi.Middlewares;
 using ArmoryManagerApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
